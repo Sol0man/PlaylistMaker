@@ -39,6 +39,7 @@
             />
 
         <Switch
+            android:id="@+id/dark_mode"
             android:layout_width="56dp"
             android:layout_height="40dp"
             android:layout_gravity="end"
