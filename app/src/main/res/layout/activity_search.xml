@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:theme="@style/Base.Theme.SettingsTheme"
+    android:orientation="vertical"
+    tools:context=".SearchActivity">
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:orientation="horizontal"
+        >
+
+        <ImageButton
+            android:id="@+id/back_button"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="start"
+            android:src="@drawable/back"/>
+        <TextView
+            android:text="@string/search"
+            style="@style/TextStyle"
+            android:textStyle="bold"
+            android:textSize="@dimen/button_text_size"
+            android:layout_marginLeft="48dp"
+            android:layout_marginTop="12dp"
+            android:fontFamily="@font/ys_display_medium"
+            />
+    </FrameLayout>
+
+<FrameLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
+
+    <EditText
+        android:id="@+id/searchEditText"
+        android:layout_width="match_parent"
+        android:layout_height="36dp"
+        android:hint="@string/search"
+        android:textSize="@dimen/text_size"
+        android:maxLines="1"
+        android:inputType="text"
+        android:drawableStart="@drawable/search_icon"
+        android:textColorHint="@color/icon_grey_color"
+        android:background="@drawable/rounded_edittext_bg"
+        android:layout_marginHorizontal="8dp"
+        android:drawablePadding="8dp"
+        android:paddingLeft="8dp"
+        />
+
+
+    <ImageView
+        android:id="@+id/clearButton"
+        android:layout_width="wrap_content"
+        android:layout_height="36dp"
+        android:src="@drawable/clear"
+        android:layout_marginRight="20dp"
+        android:visibility="gone"
+        android:layout_gravity="end"
+        android:background="#E6E8EB"
+        />
+</FrameLayout>
+</LinearLayout>
