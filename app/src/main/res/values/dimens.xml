@@ -1,10 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="radius">16dp</dimen>
     <dimen name="text_size">16sp</dimen>
+    <dimen name="button_text_size">22sp</dimen>
+    <dimen name="primary_text_size_13">13sp</dimen>
+    <dimen name="button_back_size">48dp</dimen>
+    <dimen name="track_corner_radius">2dp</dimen>
+    <dimen name="radius">16dp</dimen>
     <dimen name="side_indent">16dp</dimen>
     <dimen name="frame_height">61dp</dimen>
     <dimen name="image_width">24dp</dimen>
     <dimen name="image_height">24dp</dimen>
-    <dimen name="button_text_size">22sp</dimen>
+    <dimen name="rounded_corners_radius">2dp</dimen>
+    <dimen name="track_image_size">45dp</dimen>
+    <dimen name="padding8">8dp</dimen>
+    <dimen name="padding12">12dp</dimen>
+    <dimen name="padding16">16dp</dimen>
+    <dimen name="padding20">20dp</dimen>
+    <dimen name="padding24">24dp</dimen>
+    <dimen name="padding36">36dp</dimen>
+    <dimen name="padding48">48dp</dimen>
 </resources>

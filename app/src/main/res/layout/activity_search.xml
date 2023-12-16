@@ -3,20 +3,21 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    style="@style/SettingsBackground"
     xmlns:tools="http://schemas.android.com/tools"
-    android:theme="@style/Base.Theme.SettingsTheme"
     android:orientation="vertical"
     tools:context=".SearchActivity">
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="48dp"
+        android:layout_height="@dimen/padding48"
         android:orientation="horizontal"
         >
 
         <ImageButton
             android:id="@+id/back_button"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            style="@style/ButtonBackground"
+            android:layout_width="@dimen/button_back_size"
+            android:layout_height="@dimen/button_back_size"
             android:layout_gravity="start"
             android:src="@drawable/back"/>
         <TextView
@@ -24,8 +25,8 @@
             style="@style/TextStyle"
             android:textStyle="bold"
             android:textSize="@dimen/button_text_size"
-            android:layout_marginLeft="48dp"
-            android:layout_marginTop="12dp"
+            android:layout_marginLeft="@dimen/padding48"
+            android:layout_marginTop="@dimen/padding12"
             android:fontFamily="@font/ys_display_medium"
             />
     </FrameLayout>
@@ -37,8 +38,9 @@
 
     <EditText
         android:id="@+id/searchEditText"
+        style="@style/EditTextStyle"
         android:layout_width="match_parent"
-        android:layout_height="36dp"
+        android:layout_height="@dimen/padding36"
         android:hint="@string/search"
         android:textSize="@dimen/text_size"
         android:maxLines="1"
@@ -46,21 +48,28 @@
         android:drawableStart="@drawable/search_icon"
         android:textColorHint="@color/icon_grey_color"
         android:background="@drawable/rounded_edittext_bg"
-        android:layout_marginHorizontal="8dp"
-        android:drawablePadding="8dp"
-        android:paddingLeft="8dp"
+        android:layout_marginHorizontal="@dimen/padding8"
+        android:drawablePadding="@dimen/padding8"
+        android:paddingLeft="@dimen/padding8"
         />
 
 
     <ImageView
         android:id="@+id/clearButton"
         android:layout_width="wrap_content"
-        android:layout_height="36dp"
+        android:layout_height="@dimen/padding36"
         android:src="@drawable/clear"
-        android:layout_marginRight="20dp"
+        android:layout_marginRight="@dimen/padding20"
         android:visibility="gone"
         android:layout_gravity="end"
-        android:background="#E6E8EB"
+        android:background="@null"
         />
 </FrameLayout>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            android:layout_marginTop="@dimen/padding16"
+            />
 </LinearLayout>
