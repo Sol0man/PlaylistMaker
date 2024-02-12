@@ -4,7 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 
-class TrackListAdapter(private val trackList: List<Track>): RecyclerView.Adapter<TrackHolder>() {
+class TrackListAdapter(private var trackList: MutableList<Track>): RecyclerView.Adapter<TrackHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrackHolder {
         val view =
@@ -19,4 +19,11 @@ class TrackListAdapter(private val trackList: List<Track>): RecyclerView.Adapter
     override fun onBindViewHolder(holder: TrackHolder, position: Int) {
         holder.bind(trackList[position])
     }
+
+    fun updateList(newList: List<Track>) {
+        trackList.clear()
+        trackList.addAll(newList)
+        notifyDataSetChanged()
+    }
 }
+

@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
+import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
@@ -14,30 +15,44 @@ import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 
 class SearchActivity : AppCompatActivity() {
-    private var searchText: String = ""
+
+    private lateinit var searchText: String
+    private lateinit var recyclerView : RecyclerView
+    private lateinit var trackListAdapter : TrackListAdapter
+    private lateinit var messageImage: ImageView
+    private lateinit var buttonUpdate: Button
+    private lateinit var textViewMessageError: TextView
     private val iTunesBaseUrl = "https://itunes.apple.com"
-    private val messageImage: ImageView = findViewById(R.id.message_image)
-    private val buttonUpdate: Button = findViewById(R.id.button_update)
-    private val textViewMessageError: TextView = findViewById(R.id.text_view_message_error)
-    private val trackListAdapter = TrackListAdapter()
     private val retrofit = Retrofit.Builder()
         .baseUrl(iTunesBaseUrl)
         .addConverterFactory(GsonConverterFactory.create())
         .build()
-    val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
-    private lateinit var trackList: ArrayList<Track>
     private val iTunesService = retrofit.create(ItunesApi::class.java)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
+
+
+        recyclerView = findViewById(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(this)
+        trackListAdapter = TrackListAdapter(ArrayList())
         recyclerView.adapter = trackListAdapter
+
+
+        messageImage = findViewById(R.id.message_image)
+        buttonUpdate = findViewById(R.id.button_update)
+        textViewMessageError = findViewById(R.id.text_view_message_error)
+
+
         val backButton = findViewById<ImageButton>(R.id.back_button)
         val clearButton = findViewById<ImageView>(R.id.clearButton)
         val searchEditText = findViewById<EditText>(R.id.searchEditText)
@@ -60,8 +75,16 @@ class SearchActivity : AppCompatActivity() {
             override fun afterTextChanged(s: Editable?) {}
         })
 
+        searchEditText.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                performSearch(searchEditText.text.toString())
+                true
+            }
+            false
+        }
+
         if (savedInstanceState != null) {
-            searchText = savedInstanceState.getString("searchText").toString()
+            searchText = savedInstanceState.getString("searchText", "").toString()
             searchEditText.setText(searchText)
         }
     }
@@ -80,33 +103,55 @@ class SearchActivity : AppCompatActivity() {
         searchEditText.setText(searchText)
     }
 
+    private fun performSearch(query: String) {
+        val call = iTunesService.search(query)
+        call.enqueue(object : Callback<TrackResponse> {
+            override fun onResponse(call: Call<TrackResponse>, response: Response<TrackResponse>) {
+                if (response.isSuccessful) {
+                    val trackResponse = response.body()
+                    if (trackResponse?.results?.isEmpty() == true) {
+                        showNotFoundError()
+                    } else {
+                        val trackList = trackResponse?.results ?: emptyList()
+                        showSearchResults(trackList)
+                    }
+                } else {
+                    showNetworkError()
+                }
+            }
+
+            override fun onFailure(call: Call<TrackResponse>, t: Throwable) {
+                showNetworkError()
+            }
+        })
+    }
+
+    private fun showSearchResults(trackList: List<Track>) {
+        trackListAdapter.updateList(trackList)
+        recyclerView.visibility = View.VISIBLE
+        messageImage.visibility = View.GONE
+        buttonUpdate.visibility = View.GONE
+        textViewMessageError.visibility = View.GONE
+    }
+
+    private fun showNotFoundError() {
+        messageImage.setImageResource(if (isNightModeOn()) R.drawable.not_found_dark else R.drawable.not_found_light)
+        messageImage.visibility = View.VISIBLE
+        buttonUpdate.visibility = View.GONE
+        textViewMessageError.visibility = View.GONE
+        recyclerView.visibility = View.GONE
+    }
+
+    private fun showNetworkError() {
+        messageImage.setImageResource(if (isNightModeOn()) R.drawable.network_problem_dark else R.drawable.network_problem_light)
+        messageImage.visibility = View.VISIBLE
+        buttonUpdate.visibility = View.VISIBLE
+        textViewMessageError.visibility = View.VISIBLE
+        recyclerView.visibility = View.GONE
+    }
+
     private fun hideKeyboard(view: View) {
         val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(view.windowToken, 0)
-    }
-
-
-    private fun showNotFoundError() {                 //Ничего не нашлось
-        if (this.isNightModeOn()) {
-            Glide.with(this)
-                .load(R.drawable.not_found_dark)
-                .into(messageImage)
-        } else {
-            Glide.with(this)
-                .load(R.drawable.not_found_light)
-                .into(messageImage)
-        }
-    }
-
-    private fun showNetworkError() {                 //Ошибка сети
-        if (this.isNightModeOn()) {
-            Glide.with(this)
-                .load(R.drawable.network_problem_dark)
-                .into(messageImage)
-        } else {
-            Glide.with(this)
-                .load(R.drawable.network_problem_light)
-                .into(messageImage)
-        }
     }
 }
