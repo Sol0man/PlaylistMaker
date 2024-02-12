@@ -138,8 +138,9 @@ class SearchActivity : AppCompatActivity() {
         messageImage.setImageResource(if (isNightModeOn()) R.drawable.not_found_dark else R.drawable.not_found_light)
         messageImage.visibility = View.VISIBLE
         buttonUpdate.visibility = View.GONE
-        textViewMessageError.visibility = View.GONE
+        textViewMessageError.visibility = View.VISIBLE
         recyclerView.visibility = View.GONE
+        textViewMessageError.setText(R.string.not_found_error)
     }
 
     private fun showNetworkError() {
@@ -148,6 +149,7 @@ class SearchActivity : AppCompatActivity() {
         buttonUpdate.visibility = View.VISIBLE
         textViewMessageError.visibility = View.VISIBLE
         recyclerView.visibility = View.GONE
+        textViewMessageError.setText(R.string.network_error)
     }
 
     private fun hideKeyboard(view: View) {
