@@ -44,6 +44,8 @@ class SearchActivity : AppCompatActivity() {
 
     private val trackListAdapter = TrackListAdapter()
 
+    private var lastFailedQuery: String? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,10 +70,17 @@ class SearchActivity : AppCompatActivity() {
         backButton.setOnClickListener {
             finish()
         }
+
         clearButton.setOnClickListener {
             searchEditText.text.clear()
             clearButton.isVisible = false
             hideKeyboard(searchEditText)
+        }
+
+        buttonUpdate.setOnClickListener {
+            lastFailedQuery?.let { query ->
+                performSearch(query)
+            }
         }
         searchEditText.addTextChangedListener(object : TextWatcher {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
@@ -125,11 +134,13 @@ class SearchActivity : AppCompatActivity() {
                         showSearchResults(resulttrackList)
                     }
                 } else {
+                    lastFailedQuery = query
                     showNetworkError()
                 }
             }
 
             override fun onFailure(call: Call<TrackResponse>, t: Throwable) {
+                lastFailedQuery = query
                 showNetworkError()
             }
         })
