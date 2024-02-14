@@ -1,10 +1,12 @@
 package com.example.playlistmaker
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 
-class TrackListAdapter(private var trackList: MutableList<Track>): RecyclerView.Adapter<TrackHolder>() {
+class TrackListAdapter(): RecyclerView.Adapter<TrackHolder>() {
+    var trackList =  ArrayList<Track>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrackHolder {
         val view =
@@ -20,10 +22,6 @@ class TrackListAdapter(private var trackList: MutableList<Track>): RecyclerView.
         holder.bind(trackList[position])
     }
 
-    fun updateList(newList: List<Track>) {
-        trackList.clear()
-        trackList.addAll(newList)
-        notifyDataSetChanged()
-    }
+
 }
 

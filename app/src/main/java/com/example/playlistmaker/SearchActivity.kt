@@ -24,33 +24,41 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class SearchActivity : AppCompatActivity() {
 
-    private lateinit var searchText: String
-    private lateinit var recyclerView : RecyclerView
-    private lateinit var trackListAdapter : TrackListAdapter
-    private lateinit var messageImage: ImageView
-    private lateinit var buttonUpdate: Button
-    private lateinit var textViewMessageError: TextView
     private val iTunesBaseUrl = "https://itunes.apple.com"
+
     private val retrofit = Retrofit.Builder()
         .baseUrl(iTunesBaseUrl)
         .addConverterFactory(GsonConverterFactory.create())
         .build()
+
     private val iTunesService = retrofit.create(ItunesApi::class.java)
+
+    private lateinit var searchText: String
+    private lateinit var recyclerView : RecyclerView
+    private lateinit var messageImage: ImageView
+    private lateinit var buttonUpdate: Button
+    private lateinit var textViewMessageError: TextView
+
+
+    private val trackList = ArrayList<Track>()
+
+    private val trackListAdapter = TrackListAdapter()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
 
 
-        recyclerView = findViewById(R.id.recyclerView)
-        recyclerView.layoutManager = LinearLayoutManager(this)
-        trackListAdapter = TrackListAdapter(ArrayList())
-        recyclerView.adapter = trackListAdapter
-
-
+        recyclerView = findViewById(R.id.recycler_view)
         messageImage = findViewById(R.id.message_image)
         buttonUpdate = findViewById(R.id.button_update)
         textViewMessageError = findViewById(R.id.text_view_message_error)
+
+        trackListAdapter.trackList = trackList
+
+        recyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        recyclerView.adapter = trackListAdapter
 
 
         val backButton = findViewById<ImageButton>(R.id.back_button)
@@ -79,9 +87,11 @@ class SearchActivity : AppCompatActivity() {
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 performSearch(searchEditText.text.toString())
                 true
+            } else {
+                false
             }
-            false
         }
+
 
         if (savedInstanceState != null) {
             searchText = savedInstanceState.getString("searchText", "").toString()
@@ -104,16 +114,15 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun performSearch(query: String) {
-        val call = iTunesService.search(query)
-        call.enqueue(object : Callback<TrackResponse> {
+        iTunesService.search(query).enqueue(object : Callback<TrackResponse> {
             override fun onResponse(call: Call<TrackResponse>, response: Response<TrackResponse>) {
                 if (response.isSuccessful) {
                     val trackResponse = response.body()
                     if (trackResponse?.results?.isEmpty() == true) {
                         showNotFoundError()
                     } else {
-                        val trackList = trackResponse?.results ?: emptyList()
-                        showSearchResults(trackList)
+                        val resulttrackList = trackResponse?.results ?: emptyList()
+                        showSearchResults(resulttrackList)
                     }
                 } else {
                     showNetworkError()
@@ -126,8 +135,12 @@ class SearchActivity : AppCompatActivity() {
         })
     }
 
+
     private fun showSearchResults(trackList: List<Track>) {
-        trackListAdapter.updateList(trackList)
+        this.trackList.clear()
+        this.trackList.addAll(trackList)
+        trackListAdapter.notifyDataSetChanged()
+
         recyclerView.visibility = View.VISIBLE
         messageImage.visibility = View.GONE
         buttonUpdate.visibility = View.GONE
