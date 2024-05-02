@@ -1,5 +1,7 @@
 package com.example.playlistmaker
 
+import android.annotation.SuppressLint
+import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
@@ -38,50 +40,85 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var messageImage: ImageView
     private lateinit var buttonUpdate: Button
     private lateinit var textViewMessageError: TextView
+    private lateinit var clearHistoryButton: Button
+    private lateinit var searchHistory: SearchHistory
+    private lateinit var rvSearchHistory: RecyclerView
+    private lateinit var tvSearchHistoryTitle: TextView
+
 
 
     private val trackList = ArrayList<Track>()
-
     private val trackListAdapter = TrackListAdapter()
+    private val historyAdapter = TrackListAdapter()
 
     private var lastFailedQuery: String? = null
 
 
+    @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
 
 
-        recyclerView = findViewById(R.id.recycler_view)
+        recyclerView = findViewById(R.id.rvTracks)
         messageImage = findViewById(R.id.message_image)
         buttonUpdate = findViewById(R.id.button_update)
-        textViewMessageError = findViewById(R.id.text_view_message_error)
+        textViewMessageError = findViewById(R.id.tvMessageError)
+        clearHistoryButton = findViewById(R.id.clear_history_button)
+        rvSearchHistory = findViewById(R.id.rv_search_history)
+        tvSearchHistoryTitle = findViewById(R.id.tv_search_history_title)
 
         trackListAdapter.trackList = trackList
 
         recyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         recyclerView.adapter = trackListAdapter
 
+        rvSearchHistory.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        rvSearchHistory.adapter = historyAdapter
+
+
 
         val backButton = findViewById<ImageButton>(R.id.back_button)
         val clearButton = findViewById<ImageView>(R.id.clearButton)
         val searchEditText = findViewById<EditText>(R.id.searchEditText)
+        val sharedPreferences = getSharedPreferences("search_history", Context.MODE_PRIVATE)
+        searchHistory = SearchHistory(sharedPreferences)
+
 
         backButton.setOnClickListener {
-            finish()
+            finish()                                //кнопка назад
         }
 
         clearButton.setOnClickListener {
             searchEditText.text.clear()
-            clearButton.isVisible = false
+            clearButton.isVisible = false            //кнопка очистить строку поиска
             hideKeyboard(searchEditText)
         }
 
         buttonUpdate.setOnClickListener {
-            lastFailedQuery?.let { query ->
+            lastFailedQuery?.let { query ->   //кнопка обновить запрос
                 performSearch(query)
             }
         }
+        if(searchHistory.searchList.isNotEmpty() && searchEditText.text.isNullOrEmpty()){
+            tvSearchHistoryTitle.isVisible = true
+            rvSearchHistory.isVisible = true
+            clearHistoryButton.isVisible = true
+
+        }
+
+        clearHistoryButton.setOnClickListener {   //кнопка очистить историю поиска
+            searchHistory.clearHistory()
+        }
+
+        trackListAdapter.setOnItemClickListener { track ->
+            searchHistory.addTrack(track)
+        }
+
+        historyAdapter.setOnItemClickListener { track ->
+            searchHistory.addTrack(track)
+        }
+
         searchEditText.addTextChangedListener(object : TextWatcher {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 clearButton.isVisible = if (s.isNullOrEmpty()) false else true
@@ -98,6 +135,18 @@ class SearchActivity : AppCompatActivity() {
                 true
             } else {
                 false
+            }
+        }
+
+        searchEditText.setOnFocusChangeListener{_, hasFocus->
+            if(hasFocus && searchHistory.searchList.isNotEmpty() && searchEditText.text.isNullOrEmpty()){
+                tvSearchHistoryTitle.isVisible = true
+                rvSearchHistory.isVisible = true
+                clearHistoryButton.isVisible = true
+            } else {
+                tvSearchHistoryTitle.isVisible = false
+                rvSearchHistory.isVisible = false
+                clearHistoryButton.isVisible = false
             }
         }
 
@@ -130,8 +179,8 @@ class SearchActivity : AppCompatActivity() {
                     if (trackResponse?.results?.isEmpty() == true) {
                         showNotFoundError()
                     } else {
-                        val resulttrackList = trackResponse?.results ?: emptyList()
-                        showSearchResults(resulttrackList)
+                        val resultTrackList = trackResponse?.results ?: emptyList()
+                        showSearchResults(resultTrackList)
                     }
                 } else {
                     lastFailedQuery = query
@@ -149,30 +198,30 @@ class SearchActivity : AppCompatActivity() {
 
     private fun showSearchResults(trackList: List<Track>) {
         this.trackList.clear()
-        this.trackList.addAll(trackList)
+        this.trackList.addAll(trackList)                  //показать результат
         trackListAdapter.notifyDataSetChanged()
 
-        recyclerView.visibility = View.VISIBLE
-        messageImage.visibility = View.GONE
-        buttonUpdate.visibility = View.GONE
-        textViewMessageError.visibility = View.GONE
+        recyclerView.isVisible = true
+        messageImage.isVisible = false
+        buttonUpdate.isVisible = false
+        textViewMessageError.isVisible = false
     }
 
     private fun showNotFoundError() {
         messageImage.setImageResource(if (isNightModeOn()) R.drawable.not_found_dark else R.drawable.not_found_light)
-        messageImage.visibility = View.VISIBLE
-        buttonUpdate.visibility = View.GONE
-        textViewMessageError.visibility = View.VISIBLE
-        recyclerView.visibility = View.GONE
+        messageImage.isVisible = true
+        buttonUpdate.isVisible = false
+        textViewMessageError.isVisible = true                   //ошибка ничего не найдено
+        recyclerView.isVisible = false
         textViewMessageError.setText(R.string.not_found_error)
     }
 
     private fun showNetworkError() {
         messageImage.setImageResource(if (isNightModeOn()) R.drawable.network_problem_dark else R.drawable.network_problem_light)
-        messageImage.visibility = View.VISIBLE
-        buttonUpdate.visibility = View.VISIBLE
-        textViewMessageError.visibility = View.VISIBLE
-        recyclerView.visibility = View.GONE
+        messageImage.isVisible = true
+        buttonUpdate.isVisible = true
+        textViewMessageError.isVisible = true                   //ошибка нет соединения
+        recyclerView.isVisible = false
         textViewMessageError.setText(R.string.network_error)
     }
 

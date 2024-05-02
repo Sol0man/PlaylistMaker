@@ -33,17 +33,13 @@
         android:layout_height="@dimen/frame_height"
         android:paddingHorizontal="@dimen/side_indent"
         android:layout_marginTop="24dp">
-        <TextView
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/themeSwitcher"
             android:text="@string/dark_theme"
             style="@style/TextStyle"
-            />
-
-        <Switch
-            android:id="@+id/dark_mode"
-            android:layout_width="56dp"
-            android:layout_height="40dp"
-            android:layout_gravity="end"
-            />
+            android:layout_gravity="start"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
     </FrameLayout>
 
     <FrameLayout
@@ -96,6 +92,9 @@
             android:src="@drawable/agreement_forward"
             android:layout_gravity="end"/>
     </FrameLayout>
+
+
+
 
 </LinearLayout>
 

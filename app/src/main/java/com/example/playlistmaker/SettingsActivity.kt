@@ -7,6 +7,8 @@ import android.os.Bundle
 import android.widget.ImageButton
 import android.widget.Switch
 import androidx.appcompat.app.AppCompatDelegate
+import com.example.playlistmaker.app.App
+import com.google.android.material.switchmaterial.SwitchMaterial
 
 class SettingsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -20,7 +22,12 @@ class SettingsActivity : AppCompatActivity() {
         val shareButton = findViewById<ImageButton>(R.id.share_button)
         val supportButton = findViewById<ImageButton>(R.id.support_button)
         val agreementButton = findViewById<ImageButton>(R.id.agreement_button)
-        val darkModeSwitch = findViewById<Switch>(R.id.dark_mode)
+        val themeSwitcher = findViewById<SwitchMaterial>(R.id.themeSwitcher)
+
+        themeSwitcher.isChecked = when (AppCompatDelegate.getDefaultNightMode()) {
+            AppCompatDelegate.MODE_NIGHT_YES -> false
+            else -> true
+        }
 
         shareButton.setOnClickListener {
             val urlShare = getString(R.string.url_share)
@@ -51,14 +58,9 @@ class SettingsActivity : AppCompatActivity() {
 
             startActivity(browserIntent)
         }
-        darkModeSwitch.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked) {
-                // Включить темную тему
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-            } else {
-                // Включить светлую тему
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-            }
+
+        themeSwitcher.setOnCheckedChangeListener { switcher, checked ->
+            (applicationContext as App).switchTheme(checked)
         }
     }
 }
