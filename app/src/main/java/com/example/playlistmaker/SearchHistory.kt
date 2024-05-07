@@ -42,6 +42,7 @@ class SearchHistory (private val sharedPreferences: SharedPreferences) {
     fun clearHistory() {
         searchList.clear()
         writeSearchHistory(searchList)
+
     }
 
     private fun readSearchHistory():ArrayList<Track> {

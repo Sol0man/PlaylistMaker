@@ -1,22 +1,27 @@
 package com.example.playlistmaker
 
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.ImageButton
-import android.widget.Switch
 import androidx.appcompat.app.AppCompatDelegate
 import com.example.playlistmaker.app.App
 import com.google.android.material.switchmaterial.SwitchMaterial
 
 class SettingsActivity : AppCompatActivity() {
+
+    private val sharedPreferences by lazy {
+        getSharedPreferences("theme_preferences", Context.MODE_PRIVATE)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
-       val backButton = findViewById<ImageButton>(R.id.back_button)
+        val backButton = findViewById<ImageButton>(R.id.back_button)
 
-        backButton.setOnClickListener{
+        backButton.setOnClickListener {
             finish()
         }
         val shareButton = findViewById<ImageButton>(R.id.share_button)
@@ -24,10 +29,9 @@ class SettingsActivity : AppCompatActivity() {
         val agreementButton = findViewById<ImageButton>(R.id.agreement_button)
         val themeSwitcher = findViewById<SwitchMaterial>(R.id.themeSwitcher)
 
-        themeSwitcher.isChecked = when (AppCompatDelegate.getDefaultNightMode()) {
-            AppCompatDelegate.MODE_NIGHT_YES -> false
-            else -> true
-        }
+        //загрузка текущей настройки темы из SP
+        val isDarkMode = sharedPreferences.getBoolean("dark_mode", false)
+        themeSwitcher.isChecked = isDarkMode
 
         shareButton.setOnClickListener {
             val urlShare = getString(R.string.url_share)
@@ -59,8 +63,22 @@ class SettingsActivity : AppCompatActivity() {
             startActivity(browserIntent)
         }
 
-        themeSwitcher.setOnCheckedChangeListener { switcher, checked ->
-            (applicationContext as App).switchTheme(checked)
+        themeSwitcher.setOnCheckedChangeListener { _, isCheked ->
+            saveThemeSetting(isCheked)              //сохранение настройки темы в SP
+            applyTheme(isCheked)                    //применение темы
         }
+    }
+    private fun saveThemeSetting(isDarkMode: Boolean) {
+        sharedPreferences
+            .edit()
+            .putBoolean("dark_mode", isDarkMode)
+            .apply()
+    }
+
+    private fun applyTheme(isDarkMode: Boolean) {
+        val mode =
+            if (isDarkMode) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
+        AppCompatDelegate.setDefaultNightMode(mode)
+        recreate()                                  // Пересоздание активити для применения новой темы
     }
 }

@@ -13,6 +13,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -36,6 +37,7 @@ class SearchActivity : AppCompatActivity() {
     private val iTunesService = retrofit.create(ItunesApi::class.java)
 
     private lateinit var searchText: String
+    private lateinit var searchEditText: EditText
     private lateinit var recyclerView : RecyclerView
     private lateinit var messageImage: ImageView
     private lateinit var buttonUpdate: Button
@@ -44,12 +46,15 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var searchHistory: SearchHistory
     private lateinit var rvSearchHistory: RecyclerView
     private lateinit var tvSearchHistoryTitle: TextView
+    private lateinit var historyLayout: LinearLayout
+    private lateinit var trackListLayout: LinearLayout
 
 
 
     private val trackList = ArrayList<Track>()
     private val trackListAdapter = TrackListAdapter()
-    private val historyAdapter = TrackListAdapter()
+    private var searchList = ArrayList<Track>()
+    private val historyAdapter = HistoryAdapter()
 
     private var lastFailedQuery: String? = null
 
@@ -61,14 +66,21 @@ class SearchActivity : AppCompatActivity() {
 
 
         recyclerView = findViewById(R.id.rvTracks)
+        searchEditText = findViewById(R.id.searchEditText)
         messageImage = findViewById(R.id.message_image)
         buttonUpdate = findViewById(R.id.button_update)
         textViewMessageError = findViewById(R.id.tvMessageError)
         clearHistoryButton = findViewById(R.id.clear_history_button)
         rvSearchHistory = findViewById(R.id.rv_search_history)
         tvSearchHistoryTitle = findViewById(R.id.tv_search_history_title)
+        historyLayout = findViewById(R.id.history_layout)
+        trackListLayout = findViewById(R.id.tracklist_layout)
+
 
         trackListAdapter.trackList = trackList
+
+
+
 
         recyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         recyclerView.adapter = trackListAdapter
@@ -78,11 +90,12 @@ class SearchActivity : AppCompatActivity() {
 
 
 
+
         val backButton = findViewById<ImageButton>(R.id.back_button)
         val clearButton = findViewById<ImageView>(R.id.clearButton)
-        val searchEditText = findViewById<EditText>(R.id.searchEditText)
         val sharedPreferences = getSharedPreferences("search_history", Context.MODE_PRIVATE)
         searchHistory = SearchHistory(sharedPreferences)
+        historyAdapter.setTracks(searchHistory.getTracksHistory())
 
 
         backButton.setOnClickListener {
@@ -91,7 +104,9 @@ class SearchActivity : AppCompatActivity() {
 
         clearButton.setOnClickListener {
             searchEditText.text.clear()
+            clearFoundTracks()
             clearButton.isVisible = false            //кнопка очистить строку поиска
+            visibleAndGoneHistoryLayout(true)
             hideKeyboard(searchEditText)
         }
 
@@ -100,23 +115,21 @@ class SearchActivity : AppCompatActivity() {
                 performSearch(query)
             }
         }
-        if(searchHistory.searchList.isNotEmpty() && searchEditText.text.isNullOrEmpty()){
-            tvSearchHistoryTitle.isVisible = true
-            rvSearchHistory.isVisible = true
-            clearHistoryButton.isVisible = true
-
-        }
 
         clearHistoryButton.setOnClickListener {   //кнопка очистить историю поиска
             searchHistory.clearHistory()
+            historyAdapter.setTracks(searchHistory.getTracksHistory())
+            visibleAndGoneHistoryLayout(false)
         }
 
         trackListAdapter.setOnItemClickListener { track ->
             searchHistory.addTrack(track)
+            historyAdapter.setTracks(searchHistory.getTracksHistory())
         }
 
         historyAdapter.setOnItemClickListener { track ->
             searchHistory.addTrack(track)
+            historyAdapter.setTracks(searchHistory.getTracksHistory())
         }
 
         searchEditText.addTextChangedListener(object : TextWatcher {
@@ -139,17 +152,13 @@ class SearchActivity : AppCompatActivity() {
         }
 
         searchEditText.setOnFocusChangeListener{_, hasFocus->
-            if(hasFocus && searchHistory.searchList.isNotEmpty() && searchEditText.text.isNullOrEmpty()){
-                tvSearchHistoryTitle.isVisible = true
-                rvSearchHistory.isVisible = true
-                clearHistoryButton.isVisible = true
+            if(hasFocus && searchHistory.getTracksHistory().isNotEmpty() && searchEditText.text.isEmpty()){
+                visibleAndGoneHistoryLayout(true)
+                trackListLayout.visibility = View.GONE
             } else {
-                tvSearchHistoryTitle.isVisible = false
-                rvSearchHistory.isVisible = false
-                clearHistoryButton.isVisible = false
+                visibleAndGoneHistoryLayout(false)
             }
         }
-
 
         if (savedInstanceState != null) {
             searchText = savedInstanceState.getString("searchText", "").toString()
@@ -195,7 +204,6 @@ class SearchActivity : AppCompatActivity() {
         })
     }
 
-
     private fun showSearchResults(trackList: List<Track>) {
         this.trackList.clear()
         this.trackList.addAll(trackList)                  //показать результат
@@ -229,4 +237,17 @@ class SearchActivity : AppCompatActivity() {
         val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(view.windowToken, 0)
     }
+    private fun clearFoundTracks(){
+        trackList.clear()
+        trackListAdapter.notifyDataSetChanged()
+    }
+    private fun visibleAndGoneHistoryLayout(action: Boolean){
+        if(action && searchHistory.getTracksHistory().isNotEmpty() && searchEditText.hasFocus()){
+            historyLayout.visibility = View.VISIBLE
+            trackListLayout.visibility = View.GONE
+        } else{
+            historyLayout.visibility = View.GONE
+        }
+    }
+
 }
