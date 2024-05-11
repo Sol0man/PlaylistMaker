@@ -26,7 +26,6 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 
 class SearchActivity : AppCompatActivity() {
-
     private val iTunesBaseUrl = "https://itunes.apple.com"
 
     private val retrofit = Retrofit.Builder()
@@ -53,7 +52,6 @@ class SearchActivity : AppCompatActivity() {
 
     private val trackList = ArrayList<Track>()
     private val trackListAdapter = TrackListAdapter()
-    private var searchList = ArrayList<Track>()
     private val historyAdapter = HistoryAdapter()
 
     private var lastFailedQuery: String? = null
@@ -76,19 +74,12 @@ class SearchActivity : AppCompatActivity() {
         historyLayout = findViewById(R.id.history_layout)
         trackListLayout = findViewById(R.id.tracklist_layout)
 
-
         trackListAdapter.trackList = trackList
-
-
-
 
         recyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         recyclerView.adapter = trackListAdapter
-
         rvSearchHistory.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         rvSearchHistory.adapter = historyAdapter
-
-
 
 
         val backButton = findViewById<ImageButton>(R.id.back_button)
@@ -134,7 +125,12 @@ class SearchActivity : AppCompatActivity() {
 
         searchEditText.addTextChangedListener(object : TextWatcher {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                clearButton.isVisible = if (s.isNullOrEmpty()) false else true
+                clearButton.isVisible = !s.isNullOrEmpty()
+                historyLayout.isVisible =
+                    (searchEditText.hasFocus()
+                            && s?.isEmpty() == true
+                            && searchHistory.getTracksHistory().isNotEmpty()
+                            )
             }
 
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -143,18 +139,19 @@ class SearchActivity : AppCompatActivity() {
         })
 
         searchEditText.setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                performSearch(searchEditText.text.toString())
-                true
-            } else {
-                false
+
+                if (searchEditText.text.isNotEmpty() && actionId == EditorInfo.IME_ACTION_DONE) {
+                    performSearch(searchEditText.text.toString())
+                    true
+                } else {
+                    false
+                }
             }
-        }
+
 
         searchEditText.setOnFocusChangeListener{_, hasFocus->
             if(hasFocus && searchHistory.getTracksHistory().isNotEmpty() && searchEditText.text.isEmpty()){
-                visibleAndGoneHistoryLayout(true)
-                trackListLayout.visibility = View.GONE
+                updateRecyclerViewSearchHistory()
             } else {
                 visibleAndGoneHistoryLayout(false)
             }
@@ -185,6 +182,7 @@ class SearchActivity : AppCompatActivity() {
             override fun onResponse(call: Call<TrackResponse>, response: Response<TrackResponse>) {
                 if (response.isSuccessful) {
                     val trackResponse = response.body()
+                    trackListLayout.visibility = View.VISIBLE
                     if (trackResponse?.results?.isEmpty() == true) {
                         showNotFoundError()
                     } else {
@@ -204,6 +202,7 @@ class SearchActivity : AppCompatActivity() {
         })
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun showSearchResults(trackList: List<Track>) {
         this.trackList.clear()
         this.trackList.addAll(trackList)                  //показать результат
@@ -237,6 +236,7 @@ class SearchActivity : AppCompatActivity() {
         val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(view.windowToken, 0)
     }
+    @SuppressLint("NotifyDataSetChanged")
     private fun clearFoundTracks(){
         trackList.clear()
         trackListAdapter.notifyDataSetChanged()
@@ -249,5 +249,8 @@ class SearchActivity : AppCompatActivity() {
             historyLayout.visibility = View.GONE
         }
     }
-
+    private fun updateRecyclerViewSearchHistory(){
+        visibleAndGoneHistoryLayout(true)
+        searchHistory.getTracksHistory()
+    }
 }

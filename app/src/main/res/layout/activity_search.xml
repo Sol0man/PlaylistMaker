@@ -48,6 +48,7 @@
         android:drawableStart="@drawable/search_icon"
         android:textColorHint="@color/icon_grey_color"
         android:background="@drawable/rounded_edittext_bg"
+        android:textCursorDrawable="@drawable/edit_text_cursor"
         android:layout_marginHorizontal="@dimen/padding8"
         android:drawablePadding="@dimen/padding8"
         android:paddingLeft="@dimen/padding8"

@@ -7,7 +7,6 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.ImageButton
 import androidx.appcompat.app.AppCompatDelegate
-import com.example.playlistmaker.app.App
 import com.google.android.material.switchmaterial.SwitchMaterial
 
 class SettingsActivity : AppCompatActivity() {
@@ -19,11 +18,13 @@ class SettingsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
+
         val backButton = findViewById<ImageButton>(R.id.back_button)
 
         backButton.setOnClickListener {
             finish()
         }
+
         val shareButton = findViewById<ImageButton>(R.id.share_button)
         val supportButton = findViewById<ImageButton>(R.id.support_button)
         val agreementButton = findViewById<ImageButton>(R.id.agreement_button)
@@ -32,6 +33,11 @@ class SettingsActivity : AppCompatActivity() {
         //загрузка текущей настройки темы из SP
         val isDarkMode = sharedPreferences.getBoolean("dark_mode", false)
         themeSwitcher.isChecked = isDarkMode
+
+        themeSwitcher.setOnCheckedChangeListener { _, isChecked ->
+            saveThemeSetting(isChecked) // Сохранение настройки темы в SP
+            applyTheme(isChecked) // Применение темы
+        }
 
         shareButton.setOnClickListener {
             val urlShare = getString(R.string.url_share)
@@ -42,6 +48,7 @@ class SettingsActivity : AppCompatActivity() {
 
             startActivity(sendIntent)
         }
+
         supportButton.setOnClickListener {
             val emails = getString(R.string.emails_blank)
             val forDevelopers = getString(R.string.for_developer)
@@ -56,18 +63,15 @@ class SettingsActivity : AppCompatActivity() {
 
             startActivity(emailIntent)
         }
+
         agreementButton.setOnClickListener {
             val urlAgreement = getString(R.string.url_agreement)
             val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(urlAgreement))
 
             startActivity(browserIntent)
         }
-
-        themeSwitcher.setOnCheckedChangeListener { _, isCheked ->
-            saveThemeSetting(isCheked)              //сохранение настройки темы в SP
-            applyTheme(isCheked)                    //применение темы
-        }
     }
+
     private fun saveThemeSetting(isDarkMode: Boolean) {
         sharedPreferences
             .edit()
@@ -75,10 +79,9 @@ class SettingsActivity : AppCompatActivity() {
             .apply()
     }
 
-    private fun applyTheme(isDarkMode: Boolean) {
-        val mode =
-            if (isDarkMode) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
+     fun applyTheme(isDarkMode: Boolean) {
+        val mode = if (isDarkMode) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
         AppCompatDelegate.setDefaultNightMode(mode)
-        recreate()                                  // Пересоздание активити для применения новой темы
+        delegate.applyDayNight()
     }
 }
