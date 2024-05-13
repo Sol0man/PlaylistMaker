@@ -4,8 +4,8 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 
-class TrackListAdapter(): RecyclerView.Adapter<TrackHolder>() {
-    var trackList =  ArrayList<Track>()
+class HistoryAdapter : RecyclerView.Adapter<TrackHolder>() {
+    var searchList = ArrayList<Track>()
     var itemClickListener: ((Track) -> Unit)? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrackHolder {
@@ -15,17 +15,22 @@ class TrackListAdapter(): RecyclerView.Adapter<TrackHolder>() {
     }
 
     override fun getItemCount(): Int {
-        return trackList.size
+        return searchList.size
     }
 
     override fun onBindViewHolder(holder: TrackHolder, position: Int) {
-        holder.bind(trackList[position])
+        holder.bind(searchList[position])
         holder.itemView.setOnClickListener {
-            itemClickListener?.invoke(trackList[position])
+            itemClickListener?.invoke(searchList[position])
         }
     }
+    fun setTracks(tracks: List<Track>) {
+        searchList.clear()
+        searchList.addAll(tracks)
+        notifyDataSetChanged()
+    }
+
     fun setOnItemClickListener(listener: (Track) -> Unit) {
         itemClickListener = listener
     }
 }
-

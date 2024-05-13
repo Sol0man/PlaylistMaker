@@ -1,26 +1,43 @@
 package com.example.playlistmaker
 
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.ImageButton
-import android.widget.Switch
 import androidx.appcompat.app.AppCompatDelegate
+import com.google.android.material.switchmaterial.SwitchMaterial
 
 class SettingsActivity : AppCompatActivity() {
+
+    private val sharedPreferences by lazy {
+        getSharedPreferences("theme_preferences", Context.MODE_PRIVATE)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
-       val backButton = findViewById<ImageButton>(R.id.back_button)
 
-        backButton.setOnClickListener{
+        val backButton = findViewById<ImageButton>(R.id.back_button)
+
+        backButton.setOnClickListener {
             finish()
         }
+
         val shareButton = findViewById<ImageButton>(R.id.share_button)
         val supportButton = findViewById<ImageButton>(R.id.support_button)
         val agreementButton = findViewById<ImageButton>(R.id.agreement_button)
-        val darkModeSwitch = findViewById<Switch>(R.id.dark_mode)
+        val themeSwitcher = findViewById<SwitchMaterial>(R.id.themeSwitcher)
+
+        //загрузка текущей настройки темы из SP
+        val isDarkMode = sharedPreferences.getBoolean("dark_mode", false)
+        themeSwitcher.isChecked = isDarkMode
+
+        themeSwitcher.setOnCheckedChangeListener { _, isChecked ->
+            saveThemeSetting(isChecked) // Сохранение настройки темы в SP
+            applyTheme(isChecked) // Применение темы
+        }
 
         shareButton.setOnClickListener {
             val urlShare = getString(R.string.url_share)
@@ -31,6 +48,7 @@ class SettingsActivity : AppCompatActivity() {
 
             startActivity(sendIntent)
         }
+
         supportButton.setOnClickListener {
             val emails = getString(R.string.emails_blank)
             val forDevelopers = getString(R.string.for_developer)
@@ -45,20 +63,25 @@ class SettingsActivity : AppCompatActivity() {
 
             startActivity(emailIntent)
         }
+
         agreementButton.setOnClickListener {
             val urlAgreement = getString(R.string.url_agreement)
             val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(urlAgreement))
 
             startActivity(browserIntent)
         }
-        darkModeSwitch.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked) {
-                // Включить темную тему
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-            } else {
-                // Включить светлую тему
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-            }
-        }
+    }
+
+    private fun saveThemeSetting(isDarkMode: Boolean) {
+        sharedPreferences
+            .edit()
+            .putBoolean("dark_mode", isDarkMode)
+            .apply()
+    }
+
+     fun applyTheme(isDarkMode: Boolean) {
+        val mode = if (isDarkMode) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
+        AppCompatDelegate.setDefaultNightMode(mode)
+        delegate.applyDayNight()
     }
 }
