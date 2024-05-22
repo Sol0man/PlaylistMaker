@@ -2,6 +2,7 @@ package com.example.playlistmaker
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
@@ -18,6 +19,7 @@ import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.gson.Gson
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -115,12 +117,14 @@ class SearchActivity : AppCompatActivity() {
 
         trackListAdapter.setOnItemClickListener { track ->
             searchHistory.addTrack(track)
-            historyAdapter.setTracks(searchHistory.getTracksHistory())
+            historyAdapter.setTracks(searchHistory.getTracksHistory())           // нажатие на элемент поиска
+            startPlayerActivity(track)
         }
 
         historyAdapter.setOnItemClickListener { track ->
             searchHistory.addTrack(track)
-            historyAdapter.setTracks(searchHistory.getTracksHistory())
+            historyAdapter.setTracks(searchHistory.getTracksHistory())             // нажатие на элемент истории поиска
+            startPlayerActivity(track)
         }
 
         searchEditText.addTextChangedListener(object : TextWatcher {
@@ -252,5 +256,13 @@ class SearchActivity : AppCompatActivity() {
     private fun updateRecyclerViewSearchHistory(){
         visibleAndGoneHistoryLayout(true)
         searchHistory.getTracksHistory()
+    }
+
+    private fun startPlayerActivity(track: Track){
+        val gson = Gson()
+        val trackJson = gson.toJson(track)
+        val displayIntent = Intent(this, PlayerActivity::class.java)
+        displayIntent.putExtra("track", trackJson)
+        startActivity(displayIntent)
     }
 }
