@@ -64,4 +64,18 @@
     <style name="you_were_looking_for_title_style">
         <item name="android:textColor">@color/white</item>
     </style>
+
+
+
+    <style name="text_style_for_player_activity">
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="player_button">
+        <item name="android:backgroundTint">@color/gray_button_night_mode</item>
+    </style>
+
+    <style name="button_play">
+        <item name="tint">@color/white</item>
+    </style>
 </resources>

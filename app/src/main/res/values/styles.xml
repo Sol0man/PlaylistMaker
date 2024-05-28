@@ -66,6 +66,11 @@
         <item name="android:backgroundTint">@color/icon_black_color</item>
     </style>
 
+    <style name="SettingsActivityTitle">
+        <item name="android:textColor">@color/icon_black_color</item>
+        <item name="tint">@color/icon_black_color</item>
+    </style>
+
     <style name="SwitchStyle">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
@@ -77,6 +82,18 @@
     
     <style name="you_were_looking_for_title_style">
         <item name="android:textColor">@color/black</item>
+    </style>
+
+    <style name="text_style_for_player_activity">
+        <item name="android:textColor">@color/black</item>
+    </style>
+
+    <style name="player_button">
+        <item name="android:backgroundTint">@color/gray_button_light_mode</item>
+    </style>
+
+    <style name="button_play">
+        <item name="tint">@color/black</item>
     </style>
 
 

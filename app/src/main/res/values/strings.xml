@@ -17,4 +17,11 @@
     <string name="button_update">Обновить</string>
     <string name="you_were_looking_for">Вы искали</string>
     <string name="clear_history">Очистить историю</string>
+    <string name="country">Страна</string>
+    <string name="genre">Жанр</string>
+    <string name="year">Год</string>
+    <string name="album">Альбом</string>
+    <string name="duration">Длительность</string>
+    <string name="unknown" translatable="false">unknown</string>
+    <string name="not_found" translatable="false">not found</string>
 </resources>
