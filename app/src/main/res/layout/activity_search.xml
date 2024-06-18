@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/SettingsBackground"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    style="@style/SettingsBackground"
-    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     tools:context=".SearchActivity">
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/padding48"
-        android:orientation="horizontal"
-        >
+        android:orientation="horizontal">
 
         <ImageButton
             android:id="@+id/back_button"
@@ -19,55 +19,53 @@
             android:layout_width="@dimen/button_back_size"
             android:layout_height="@dimen/button_back_size"
             android:layout_gravity="start"
-            android:src="@drawable/back"/>
+            android:src="@drawable/back" />
+
         <TextView
-            android:text="@string/search"
             style="@style/TextStyle"
-            android:textStyle="bold"
-            android:textSize="@dimen/button_text_size"
             android:layout_marginLeft="@dimen/padding48"
             android:layout_marginTop="@dimen/padding12"
             android:fontFamily="@font/ys_display_medium"
-            />
+            android:text="@string/search"
+            android:textSize="@dimen/button_text_size"
+            android:textStyle="bold" />
     </FrameLayout>
 
-<FrameLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal">
-
-    <EditText
-        android:id="@+id/searchEditText"
-        style="@style/EditTextStyle"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/padding36"
-        android:hint="@string/search"
-        android:textSize="@dimen/text_size"
-        android:maxLines="1"
-        android:inputType="text"
-        android:drawableStart="@drawable/search_icon"
-        android:textColorHint="@color/icon_grey_color"
-        android:background="@drawable/rounded_edittext_bg"
-        android:textCursorDrawable="@drawable/edit_text_cursor"
-        android:layout_marginHorizontal="@dimen/padding8"
-        android:drawablePadding="@dimen/padding8"
-        android:paddingLeft="@dimen/padding8"
-        android:imeOptions="actionDone"
-        android:singleLine="true"
-        />
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/searchEditText"
+            style="@style/EditTextStyle"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/padding36"
+            android:layout_marginHorizontal="@dimen/padding8"
+            android:background="@drawable/rounded_edittext_bg"
+            android:drawableStart="@drawable/search_icon"
+            android:drawablePadding="@dimen/padding8"
+            android:hint="@string/search"
+            android:imeOptions="actionDone"
+            android:inputType="text"
+            android:maxLines="1"
+            android:paddingLeft="@dimen/padding8"
+            android:singleLine="true"
+            android:textColorHint="@color/icon_grey_color"
+            android:textCursorDrawable="@drawable/edit_text_cursor"
+            android:textSize="@dimen/text_size" />
 
 
-    <ImageView
-        android:id="@+id/clearButton"
-        android:layout_width="wrap_content"
-        android:layout_height="@dimen/padding36"
-        android:src="@drawable/clear"
-        android:layout_marginRight="@dimen/padding20"
-        android:visibility="gone"
-        android:layout_gravity="end"
-        android:background="@null"
-        />
-</FrameLayout>
+        <ImageView
+            android:id="@+id/clearButton"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/padding36"
+            android:layout_gravity="end"
+            android:layout_marginRight="@dimen/padding20"
+            android:background="@null"
+            android:src="@drawable/clear"
+            android:visibility="gone" />
+    </FrameLayout>
 
     <LinearLayout
         android:id="@+id/tracklist_layout"
@@ -136,48 +134,64 @@
 
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/history_layout"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:visibility="gone"
-        tools:visibility="visible">
+        android:layout_height="0dp"
+        android:layout_weight="1">
 
-        <TextView
-            android:id="@+id/tv_search_history_title"
-            style="@style/you_were_looking_for_title_style"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
             android:layout_gravity="center"
-            android:fontFamily="@font/ys_display_regular"
-            android:paddingHorizontal="@dimen/padding16"
-            android:paddingTop="@dimen/padding16"
-            android:paddingBottom="@dimen/padding12"
-            android:text="@string/you_were_looking_for"
-            android:textSize="@dimen/primary_text_size_19"
-            android:textStyle="bold" />
+            android:indeterminateTint="@color/blue"
+            android:visibility="gone"
+            tools:visibility="visible" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_search_history"
+        <LinearLayout
+            android:id="@+id/history_layout"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:visibility="gone"
+            tools:visibility="visible">
 
-        <Button
-            android:id="@+id/clear_history_button"
-            style="@style/ButtonUpdate"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="@dimen/padding24"
-            android:layout_marginBottom="@dimen/padding4"
-            android:fontFamily="@font/ys_display_medium"
-            android:text="@string/clear_history"
-            android:textAllCaps="false"
-            android:textSize="@dimen/primary_text_size_14"
-            app:cornerRadius="@dimen/radius_for_update_button" />
-    </LinearLayout>
+            <TextView
+                android:id="@+id/tv_search_history_title"
+                style="@style/you_were_looking_for_title_style"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:fontFamily="@font/ys_display_regular"
+                android:paddingHorizontal="@dimen/padding16"
+                android:paddingTop="@dimen/padding16"
+                android:paddingBottom="@dimen/padding12"
+                android:text="@string/you_were_looking_for"
+                android:textSize="@dimen/primary_text_size_19"
+                android:textStyle="bold" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_search_history"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+
+            <Button
+                android:id="@+id/clear_history_button"
+                style="@style/ButtonUpdate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="@dimen/padding24"
+                android:layout_marginBottom="@dimen/padding4"
+                android:fontFamily="@font/ys_display_medium"
+                android:text="@string/clear_history"
+                android:textAllCaps="false"
+                android:textSize="@dimen/primary_text_size_14"
+                app:cornerRadius="@dimen/radius_for_update_button" />
+        </LinearLayout>
+
+    </FrameLayout>
 
 </LinearLayout>
