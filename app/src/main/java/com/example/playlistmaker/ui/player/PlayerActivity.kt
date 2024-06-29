@@ -1,11 +1,8 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.ui.player
 
-import android.annotation.SuppressLint
-import android.media.MediaPlayer
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.view.View
 import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ImageView
@@ -14,14 +11,19 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
-import androidx.core.view.isVisible
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.example.playlistmaker.R
+import com.example.playlistmaker.Track
+import com.example.playlistmaker.data.player.repositoryImpl.MediaPlayerRepositoryImpl
+import com.example.playlistmaker.domain.player.impl.MediaPlayerInteractorImpl
+import com.example.playlistmaker.domain.player.models.MediaPlayerStatus
+
 import com.google.gson.Gson
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-class PlayerActivity : AppCompatActivity() {
+class  PlayerActivity : AppCompatActivity() {
     private lateinit var playButton: ImageButton
     private lateinit var queueButton: Button
     private lateinit var favoriteButton: Button
@@ -38,21 +40,18 @@ class PlayerActivity : AppCompatActivity() {
     private lateinit var duration: TextView
     private lateinit var timeOfPlay: TextView
 
-    private var mediaPlayer = MediaPlayer()
-    private var playerState = STATE_DEFAULT
-    private var currentPosition = 0
 
+
+    private val interactor = MediaPlayerInteractorImpl(MediaPlayerRepositoryImpl())
+
+    private var playerState = MediaPlayerStatus.STATE_DEFAULT
     private val handler = Handler(Looper.getMainLooper())
     private val updateTimeRunnable = object :Runnable {
         override fun run() {
-            if (playerState == STATE_PLAYING){
-                val currentPosition = mediaPlayer.currentPosition
-                timeOfPlay.text = SimpleDateFormat("m:ss", Locale.getDefault()).format(currentPosition)
+                updateTimer()
                 handler.postDelayed(this, 100)
             }
         }
-    }
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -73,6 +72,7 @@ class PlayerActivity : AppCompatActivity() {
         playButton = findViewById(R.id.button_play)
 
 
+
         val backButton = findViewById<ImageView>(R.id.back_button_iv)
         backButton.setOnClickListener {
             finish()
@@ -82,31 +82,39 @@ class PlayerActivity : AppCompatActivity() {
         val track = Gson().fromJson(trackJson, Track::class.java)
 
         track?.let {
+            interactor.preparePlayer(it)
+            playerState = MediaPlayerStatus.STATE_PREPARED
             addDataInPlayer(it)
-        }
-
-        if (track?.previewUrl.isNullOrEmpty()) {
-            Toast.makeText(this, "Отсутствует аудио дорожка", Toast.LENGTH_SHORT).show()
-        } else {
-                preparePlayer(track)
+            interactor.setOnCompletionListener {
+                runOnUiThread {
+                    playButton.setImageResource(R.drawable.button_play)
+                    playerState = MediaPlayerStatus.STATE_PREPARED
+                    timeOfPlay.text = "0:00"
+                    handler.removeCallbacks(updateTimeRunnable)
+                }
             }
+        }
 
         playButton.setOnClickListener {
             playbackControl()
         }
     }
 
+
     override fun onPause() {
         super.onPause()
-        pausePlayer()
-
+        if (playerState == MediaPlayerStatus.STATE_PLAYING){
+            interactor.pausePlayer()
+            playerState = MediaPlayerStatus.STATE_PAUSED
+        }
+        playButton.setImageResource(R.drawable.button_play)
+        handler.removeCallbacks(updateTimeRunnable)
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        mediaPlayer.release()
+        interactor.destroyPlayer()
         handler.removeCallbacks(updateTimeRunnable)
-
     }
 
     private fun addDataInPlayer(track: Track) {
@@ -170,64 +178,38 @@ class PlayerActivity : AppCompatActivity() {
         set.applyTo(rootLayout)
     }
 
-    private fun preparePlayer(track: Track) {
-            mediaPlayer.reset()
-            mediaPlayer.setDataSource(track.previewUrl)
-            mediaPlayer.prepareAsync()
-            mediaPlayer.setOnPreparedListener {
-                playButton.isEnabled = true
-                playerState = STATE_PREPARED
-            }
-
-            mediaPlayer.setOnCompletionListener {
-                playerState = STATE_PREPARED
-                handler.removeCallbacks(updateTimeRunnable)
-                timeOfPlay.text = "0:00"
-                playButton.setImageResource(R.drawable.button_play)
-                mediaPlayer.seekTo(0)
-            }
-    }
-
-    private fun startPlayer() {
-        mediaPlayer.start()
-        playerState = STATE_PLAYING
-        playButton.setImageResource(R.drawable.button_pause)
-        timeOfPlay.text = SimpleDateFormat("m:ss", Locale.getDefault()).format(mediaPlayer.currentPosition)
-        handler.post(updateTimeRunnable)
-    }
-
-    private fun pausePlayer() {
-        mediaPlayer.pause()
-        playerState = STATE_PAUSED
-        playButton.setImageResource(R.drawable.button_play)
-        handler.removeCallbacks(updateTimeRunnable)
-    }
-
     private fun playbackControl() {                                                 // контроль воспроизведения
+
         when (playerState) {
-            STATE_PLAYING -> {
-                pausePlayer()
+            MediaPlayerStatus.STATE_DEFAULT -> {
             }
-
-            STATE_PAUSED -> {
-                startPlayer()
+            MediaPlayerStatus.STATE_PREPARED -> {
+                interactor.startPlayer()
+                playButton.setImageResource(R.drawable.button_pause )
+                playerState = MediaPlayerStatus.STATE_PLAYING
+                handler.post(updateTimeRunnable)
             }
-
-            STATE_PREPARED -> {
+            MediaPlayerStatus.STATE_PLAYING -> {
+                interactor.pausePlayer()
+                playButton.setImageResource(R.drawable.button_play)
+                playerState = MediaPlayerStatus.STATE_PAUSED
+                handler.removeCallbacks(updateTimeRunnable)
+            }
+            MediaPlayerStatus.STATE_PAUSED -> {
+                interactor.startPlayer()
                 playButton.setImageResource(R.drawable.button_pause)
-                startPlayer()
+                playerState = MediaPlayerStatus.STATE_PLAYING
+                handler.post(updateTimeRunnable)
             }
-
-            STATE_DEFAULT -> {
-                currentPosition = 0
+            MediaPlayerStatus.STATE_ERROR -> {
+                Toast.makeText(this, "Отсутствует аудио дорожка", Toast.LENGTH_SHORT).show()
             }
         }
     }
-
-    companion object {
-        private const val STATE_DEFAULT = 0
-        private const val STATE_PREPARED = 1
-        private const val STATE_PLAYING = 2
-        private const val STATE_PAUSED = 3
+    private fun updateTimer(){
+        if (playerState == MediaPlayerStatus.STATE_PLAYING){
+            val currentPosition = interactor.getCurrentPosition()
+            timeOfPlay.text = SimpleDateFormat("m:ss", Locale.getDefault()).format(currentPosition)
+        }
     }
 }
