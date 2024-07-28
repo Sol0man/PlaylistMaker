@@ -33,10 +33,11 @@
         android:layout_height="@dimen/frame_height"
         android:paddingHorizontal="@dimen/side_indent"
         android:layout_marginTop="24dp">
-        <com.google.android.material.switchmaterial.SwitchMaterial
+        <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/themeSwitcher"
+            android:textSize="@dimen/text_size"
             android:text="@string/dark_theme"
-            style="@style/TextStyle"
+            style="@style/SwitchButton"
             android:layout_gravity="start"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
@@ -47,7 +48,7 @@
         android:layout_height="@dimen/frame_height"
         android:paddingHorizontal="@dimen/side_indent">
         <TextView
-            android:text="@string/share"
+            android:text="@string/share_app"
             style="@style/TextStyle"
             android:layout_gravity="start"
             />
@@ -92,9 +93,5 @@
             android:src="@drawable/agreement_forward"
             android:layout_gravity="end"/>
     </FrameLayout>
-
-
-
-
 </LinearLayout>
 
