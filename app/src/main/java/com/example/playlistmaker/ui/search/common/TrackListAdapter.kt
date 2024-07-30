@@ -1,12 +1,16 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.ui.search.common
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.example.playlistmaker.R
+import com.example.playlistmaker.domain.search.model.Track
+import com.example.playlistmaker.ui.search.common.TrackHolder
 
-class TrackListAdapter(): RecyclerView.Adapter<TrackHolder>() {
-    var trackList =  ArrayList<Track>()
-    var itemClickListener: ((Track) -> Unit)? = null
+class TrackListAdapter(
+    private val trackList: List<Track>,
+    private val listener: (Track) -> Unit
+): RecyclerView.Adapter<TrackHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrackHolder {
         val view =
@@ -21,11 +25,8 @@ class TrackListAdapter(): RecyclerView.Adapter<TrackHolder>() {
     override fun onBindViewHolder(holder: TrackHolder, position: Int) {
         holder.bind(trackList[position])
         holder.itemView.setOnClickListener {
-            itemClickListener?.invoke(trackList[position])
+            listener.invoke(trackList[position])
         }
-    }
-    fun setOnItemClickListener(listener: (Track) -> Unit) {
-        itemClickListener = listener
     }
 }
 

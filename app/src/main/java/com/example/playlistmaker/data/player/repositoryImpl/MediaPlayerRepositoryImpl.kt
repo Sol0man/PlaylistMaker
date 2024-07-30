@@ -1,17 +1,16 @@
 package com.example.playlistmaker.data.player.repositoryImpl
 
 import android.media.MediaPlayer
-import com.example.playlistmaker.Track
 import com.example.playlistmaker.domain.player.MediaPlayerRepository
 import com.example.playlistmaker.domain.player.models.MediaPlayerStatus
 import com.example.playlistmaker.domain.player.models.PlayerProgressStatus
+import com.example.playlistmaker.domain.search.model.Track
 
 class MediaPlayerRepositoryImpl : MediaPlayerRepository {
+
     private val player = MediaPlayer()
     private var playerState = MediaPlayerStatus.STATE_DEFAULT
-    private var onCompletionListener: (() -> Unit)? = null
     override fun preparePlayer(track: Track) {
-        player.reset()
         try {
             player.setDataSource(track.previewUrl)
             player.prepareAsync()
@@ -20,8 +19,6 @@ class MediaPlayerRepositoryImpl : MediaPlayerRepository {
             }
             player.setOnCompletionListener {
                 playerState = MediaPlayerStatus.STATE_PREPARED
-                player.seekTo(0)
-                onCompletionListener?.invoke()
             }
 
         } catch (e: Exception) {
@@ -41,31 +38,32 @@ class MediaPlayerRepositoryImpl : MediaPlayerRepository {
     }
 
     override fun getPlayerProgressStatus(): PlayerProgressStatus {
+        val currentPosition = player.currentPosition
         return when (playerState) {
             MediaPlayerStatus.STATE_PLAYING -> {
                 PlayerProgressStatus(
                     mediaPlayerStatus = MediaPlayerStatus.STATE_PLAYING,
-                    currentPosition = player.currentPosition
+                    currentPosition = currentPosition
                 )
             }
 
             MediaPlayerStatus.STATE_DEFAULT -> {
                 PlayerProgressStatus(
                     mediaPlayerStatus = MediaPlayerStatus.STATE_DEFAULT,
-                    currentPosition = 0
+                    currentPosition = currentPosition
                 )
             }
             MediaPlayerStatus.STATE_PREPARED -> {
                 PlayerProgressStatus(
                     mediaPlayerStatus = MediaPlayerStatus.STATE_PREPARED,
-                    currentPosition = player.currentPosition
+                    currentPosition = currentPosition
 
                 )
             }
             MediaPlayerStatus.STATE_PAUSED -> {
                 PlayerProgressStatus(
                     mediaPlayerStatus = MediaPlayerStatus.STATE_PAUSED,
-                    currentPosition = player.currentPosition
+                    currentPosition = currentPosition
                 )
             }
             MediaPlayerStatus.STATE_ERROR -> {
@@ -75,14 +73,6 @@ class MediaPlayerRepositoryImpl : MediaPlayerRepository {
                 )
             }
         }
-    }
-
-    override fun getCurrentPosition(): Int {
-        return player.currentPosition
-    }
-
-    override fun setOnCompletionListener(listener: () -> Unit) {
-        onCompletionListener = listener
     }
 
     override fun destroyPlayer() {
