@@ -1,6 +1,6 @@
 package com.example.playlistmaker.domain.player.impl
 
-import com.example.playlistmaker.domain.search.model.Track
+import com.example.playlistmaker.Track
 import com.example.playlistmaker.domain.player.MediaPlayerInteractor
 import com.example.playlistmaker.domain.player.MediaPlayerRepository
 import com.example.playlistmaker.domain.player.models.PlayerProgressStatus
@@ -22,6 +22,14 @@ class MediaPlayerInteractorImpl(
 
     override fun getPlayerProgressStatus(): PlayerProgressStatus {
         return playerRepository.getPlayerProgressStatus()
+    }
+
+    override fun getCurrentPosition(): Int {
+        return playerRepository.getCurrentPosition()
+    }
+
+    override fun setOnCompletionListener(listener: () -> Unit) {
+        playerRepository.setOnCompletionListener(listener)
     }
 
     override fun destroyPlayer() {
