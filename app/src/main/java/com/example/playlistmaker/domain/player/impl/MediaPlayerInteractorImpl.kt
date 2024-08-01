@@ -1,30 +1,38 @@
 package com.example.playlistmaker.domain.player.impl
 
+import com.example.playlistmaker.Track
 import com.example.playlistmaker.domain.player.MediaPlayerInteractor
 import com.example.playlistmaker.domain.player.MediaPlayerRepository
 import com.example.playlistmaker.domain.player.models.PlayerProgressStatus
-import com.example.playlistmaker.domain.search.model.Track
 
 class MediaPlayerInteractorImpl(
-    private val mediaPlayerRepository: MediaPlayerRepository
+    private val playerRepository: MediaPlayerRepository
 ) : MediaPlayerInteractor {
     override fun preparePlayer(track: Track) {
-        mediaPlayerRepository.preparePlayer(track)
+        playerRepository.preparePlayer(track)
     }
 
     override fun startPlayer() {
-        mediaPlayerRepository.startPlayer()
+        playerRepository.startPlayer()
     }
 
     override fun pausePlayer() {
-        mediaPlayerRepository.pausePlayer()
+        playerRepository.pausePlayer()
     }
 
     override fun getPlayerProgressStatus(): PlayerProgressStatus {
-        return mediaPlayerRepository.getPlayerProgressStatus()
+        return playerRepository.getPlayerProgressStatus()
+    }
+
+    override fun getCurrentPosition(): Int {
+        return playerRepository.getCurrentPosition()
+    }
+
+    override fun setOnCompletionListener(listener: () -> Unit) {
+        playerRepository.setOnCompletionListener(listener)
     }
 
     override fun destroyPlayer() {
-        mediaPlayerRepository.destroyPlayer()
+        playerRepository.destroyPlayer()
     }
 }

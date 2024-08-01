@@ -3,7 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
     <application
         android:name=".app.App"
@@ -17,20 +16,20 @@
         android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar"
         tools:targetApi="31">
         <activity
-            android:name=".ui.player.activity.PlayerActivity"
+            android:name=".ui.player.PlayerActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.media.activity.MediaActivity"
+            android:name=".MediaActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.search.activity.SearchActivity"
+            android:name=".SearchActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.settings.activity.SettingsActivity"
+            android:name=".SettingsActivity"
             android:exported="false"
             android:theme="@style/Base.Theme.SettingsTheme" />
         <activity
-            android:name=".ui.main.MainActivity"
+            android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -21,7 +21,7 @@
     </style>
 
     <style name="EditTextButtonStyle">
-        <item name="tint">@color/yp_text_gray</item>
+        <item name="tint">@color/icon_grey_color</item>
         <item name="backgroundTint">@color/white</item>
     </style>
 
@@ -41,9 +41,9 @@
     </style>
 
     <style name="EditTextStyle">
-        <item name="android:drawableTint">@color/yp_text_gray</item>
-        <item name="android:backgroundTint">@color/yp_light_gray</item>
-        <item name="android:textColorHint">@color/yp_text_gray</item>
+        <item name="android:drawableTint">@color/icon_grey_color</item>
+        <item name="android:backgroundTint">@color/light_gray</item>
+        <item name="android:textColorHint">@color/icon_grey_color</item>
     </style>
 
     <style name="track_style_1">
@@ -51,9 +51,9 @@
     </style>
 
     <style name="track_style_2">
-        <item name="android:drawableTint">@color/yp_text_gray</item>
-        <item name="android:textColor">@color/yp_text_gray</item>
-        <item name="tint">@color/yp_text_gray</item>
+        <item name="android:drawableTint">@color/icon_grey_color</item>
+        <item name="android:textColor">@color/icon_grey_color</item>
+        <item name="tint">@color/icon_grey_color</item>
     </style>
 
     <style name="MessageError">
@@ -77,7 +77,7 @@
         <item name="android:textSize">@dimen/text_size</item>
         <item name="fontFamily">@font/ys_display_regular</item>
         <item name="android:textColor">@color/black</item>
-        <item name="colorControlActivated">@color/yp_text_gray</item>
+        <item name="colorControlActivated">@color/icon_grey_color</item>
     </style>
     
     <style name="you_were_looking_for_title_style">
@@ -96,10 +96,7 @@
         <item name="tint">@color/black</item>
     </style>
 
-    <style name="SwitchButton">
-        <item name="thumbTint">@color/yp_text_gray</item>
-        <item name="trackTint">@color/yp_light_gray</item>
-    </style>
 
+    
 
 </resources>
