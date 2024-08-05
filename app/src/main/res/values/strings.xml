@@ -4,14 +4,16 @@
     <string name="media">Медиатека</string>
     <string name="settings">Настройки</string>
     <string name="dark_theme">Темная тема</string>
-    <string name="share">Поделиться приложением</string>
+    <string name="share_app">Поделиться приложением</string>
     <string name="support">Написать в поддержку</string>
     <string name="user_agreement">Пользовательское соглашение</string>
     <string name="url_share">https://practicum.yandex.ru/profile/android-developer/</string>
+    <string name="share_type" translatable="false">text/plain</string>
     <string name="url_agreement">https://yandex.ru/legal/practicum_offer/</string>
-    <string name="emails_blank">адрес_студента@example.com</string>
-    <string name="for_developer">Сообщение разработчикам и разработчицам приложения Playlist Maker</string>
-    <string name="feedback">Спасибо разработчикам и разработчицам за крутое приложение!</string>
+    <string name="write_to_supp_email">адрес_студента@example.com</string>
+    <string name="write_to_supp_message">Спасибо разработчикам и разработчицам за крутое приложение!</string>
+    <string name="write_to_supp_theme">Сообщение разработчикам и разработчицам приложения Playlist Maker</string>
+    <string name="write_to_supp_mailto" translatable="false">mailto:</string>
     <string name="not_found_error">Ничего не нашлось</string>
     <string name="network_error">Проблемы со связью\n\nЗагрузка не удалась. Проверьте подключение к интернету</string>
     <string name="button_update">Обновить</string>
@@ -22,6 +24,7 @@
     <string name="year">Год</string>
     <string name="album">Альбом</string>
     <string name="duration">Длительность</string>
+    <string name="audio_not_found">Аудиофайл не найден</string>
     <string name="unknown" translatable="false">unknown</string>
     <string name="not_found" translatable="false">not found</string>
 </resources>
