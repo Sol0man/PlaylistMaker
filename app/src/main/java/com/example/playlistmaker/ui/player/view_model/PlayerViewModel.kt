@@ -43,12 +43,17 @@ class PlayerViewModel(
             override fun run() {
                 playerProgressStatus.value = updatePlayerProgressStatus()
 
-                if (playerProgressStatus.value!!.mediaPlayerStatus == MediaPlayerStatus.STATE_PLAYING) {
-                    mainThreadHandler.postDelayed(this, UPDATE)
-                } else if (playerProgressStatus.value!!.mediaPlayerStatus == MediaPlayerStatus.STATE_PAUSED) {
-                    mainThreadHandler.removeCallbacks(updateTimeOfPlay())
-                } else {
-                    mainThreadHandler.removeCallbacks(updateTimeOfPlay())
+                when (playerProgressStatus.value!!.mediaPlayerStatus) {
+                    MediaPlayerStatus.STATE_DEFAULT,
+                    MediaPlayerStatus.STATE_PREPARED,
+                    MediaPlayerStatus.STATE_PAUSED,
+                    MediaPlayerStatus.STATE_DEFAULT,
+                    MediaPlayerStatus.STATE_ERROR -> {
+                        mainThreadHandler.removeCallbacks(updateTimeOfPlay())
+                    }
+                    MediaPlayerStatus.STATE_PLAYING -> {
+                        mainThreadHandler.postDelayed(this, UPDATE)
+                    }
                 }
             }
         }

@@ -69,9 +69,9 @@ class  PlayerActivity : AppCompatActivity() {
         binding.trackName.text = track.trackName
         binding.artistName.text = track.artistName
         binding.albumName.text = track.collectionName
-        binding.trackYear.text = if (!track.releaseDate.equals("unknown")) {
+        binding.trackYear.text = if (!track.releaseDate.equals(R.string.unknown)) {
             track.releaseDate.substring(0, 4)
-        } else "Not Found"
+        } else getString(R.string.not_found)
         binding.genreName.text = track.primaryGenreName
         binding.countryName.text = track.country
         binding.trackDuration.text =

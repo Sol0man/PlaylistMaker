@@ -7,6 +7,7 @@ import android.text.TextWatcher
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.example.playlistmaker.R
@@ -36,6 +37,7 @@ class SearchActivity : AppCompatActivity() {
             startPlayerActivity(it)
         }
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySearchBinding.inflate(layoutInflater)
@@ -46,7 +48,7 @@ class SearchActivity : AppCompatActivity() {
         searchAdapter = TrackListAdapter(tracks, onClick)
         historyAdapter = TrackListAdapter(viewModel.getTracksHistory(), onClick)
 
-        viewModel.getFoundTracks().observe(this) {it ->
+        viewModel.getFoundTracks().observe(this) { it ->
             processingSearchStatus(it)
         }
 
@@ -77,11 +79,11 @@ class SearchActivity : AppCompatActivity() {
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 binding.clearButton.visibility = clearButtonVisibility(s)
-                binding.historyLayout.visibility =
-                    if (binding.searchEditText.hasFocus()
-                        && s?.isEmpty() == true
+                binding.historyLayout.isVisible =
+                    binding.searchEditText.hasFocus()
+                            && s?.isEmpty() == true
                             && viewModel.getTracksHistory().isNotEmpty()
-                    ) View.VISIBLE else View.GONE
+//
 
                 editTextValue = binding.searchEditText.text.toString()
                 if (editTextValue.isEmpty()) {
@@ -105,7 +107,7 @@ class SearchActivity : AppCompatActivity() {
             if (hasFocus
                 && binding.searchEditText.text.isEmpty()
                 && viewModel.getTracksHistory().isNotEmpty()
-                ) {
+            ) {
                 updateRecyclerViewSearchHistory()
             } else {
                 showAndHideHistoryLayout(false)
@@ -205,27 +207,31 @@ class SearchActivity : AppCompatActivity() {
         }
     }
 
-    private fun processingSearchStatus (trackSearchResult: TrackSearchResult) {
+    private fun processingSearchStatus(trackSearchResult: TrackSearchResult) {
         tracks.clear()
         hideRecyclerView()
-        when(trackSearchResult.status) {
+        when (trackSearchResult.status) {
             SearchStatus.DEFAULT -> {
                 binding.progressBar.visibility = View.GONE
             }
+
             SearchStatus.RESPONSE_RECEIVED -> {
                 binding.progressBar.visibility = View.GONE
                 binding.rvTracks.visibility = View.VISIBLE
                 tracks.addAll(trackSearchResult.results)
                 searchAdapter.notifyDataSetChanged()
             }
+
             SearchStatus.LIST_IS_EMPTY -> {
                 binding.progressBar.visibility = View.GONE
                 showImageError(SearchStatus.LIST_IS_EMPTY)
             }
+
             SearchStatus.NETWORK_ERROR -> {
                 binding.progressBar.visibility = View.GONE
                 showImageError(SearchStatus.NETWORK_ERROR)
             }
+
             SearchStatus.LOADING -> {
                 binding.progressBar.visibility = View.VISIBLE
             }
