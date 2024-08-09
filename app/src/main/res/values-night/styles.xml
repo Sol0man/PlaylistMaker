@@ -39,7 +39,7 @@
     </style>
 
     <style name="track_style_1">
-        <item name="android:textColor">@color/icon_grey_color</item>
+        <item name="android:textColor">@color/yp_text_gray</item>
     </style>
 
     <style name="MessageError">
@@ -77,5 +77,10 @@
 
     <style name="button_play">
         <item name="tint">@color/white</item>
+    </style>
+
+    <style name="SwitchButton">
+        <item name="thumbTint">@color/yp_blue</item>
+        <item name="trackTint">@color/yp_blue_light</item>
     </style>
 </resources>

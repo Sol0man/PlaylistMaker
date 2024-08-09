@@ -1,6 +1,6 @@
 package com.example.playlistmaker.domain.player
 
-import com.example.playlistmaker.Track
+import com.example.playlistmaker.domain.search.model.Track
 import com.example.playlistmaker.domain.player.models.PlayerProgressStatus
 
 interface MediaPlayerRepository {
@@ -8,7 +8,5 @@ interface MediaPlayerRepository {
     fun startPlayer()
     fun pausePlayer()
     fun getPlayerProgressStatus(): PlayerProgressStatus
-    fun getCurrentPosition() : Int
-    fun setOnCompletionListener(listener: () -> Unit)
     fun destroyPlayer()
 }
