@@ -64,6 +64,7 @@ class SearchActivity : AppCompatActivity() {
         binding.buttonUpdate.setOnClickListener {
             viewModel.changeRequestText(binding.searchEditText.text.toString())
             viewModel.searchDebounce()
+            hideErrorElements()
         }
 
         binding.clearHistoryButton.setOnClickListener {   //кнопка очистить историю поиска
