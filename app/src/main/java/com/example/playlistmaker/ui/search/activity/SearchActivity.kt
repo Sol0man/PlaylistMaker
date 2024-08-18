@@ -8,7 +8,6 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
-import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ActivitySearchBinding
@@ -19,7 +18,7 @@ import com.example.playlistmaker.ui.isNightModeOn
 import com.example.playlistmaker.ui.player.activity.PlayerActivity
 import com.example.playlistmaker.ui.search.common.TrackListAdapter
 import com.example.playlistmaker.ui.search.view_model.SearchViewModel
-import com.example.playlistmaker.ui.search.view_model.SearchViewModelFactory
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
 class SearchActivity : AppCompatActivity() {
@@ -27,8 +26,9 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySearchBinding
     private lateinit var searchAdapter: TrackListAdapter
     private lateinit var historyAdapter: TrackListAdapter
-    private lateinit var viewModel: SearchViewModel
     private lateinit var tracks: ArrayList<Track>
+
+    private val viewModel by viewModel<SearchViewModel>()
 
     private val onClick: (track: Track) -> Unit = {
         if (viewModel.clickDebounce()) {
@@ -43,7 +43,6 @@ class SearchActivity : AppCompatActivity() {
         binding = ActivitySearchBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        viewModel = ViewModelProvider(this, SearchViewModelFactory())[SearchViewModel::class.java]
         tracks = ArrayList<Track>()
         searchAdapter = TrackListAdapter(tracks, onClick)
         historyAdapter = TrackListAdapter(viewModel.getTracksHistory(), onClick)
@@ -65,6 +64,7 @@ class SearchActivity : AppCompatActivity() {
         binding.buttonUpdate.setOnClickListener {
             viewModel.changeRequestText(binding.searchEditText.text.toString())
             viewModel.searchDebounce()
+            hideErrorElements()
         }
 
         binding.clearHistoryButton.setOnClickListener {   //кнопка очистить историю поиска

@@ -4,23 +4,22 @@ import android.os.Build.VERSION.SDK_INT
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
-import com.example.playlistmaker.creator.Creator
 import com.example.playlistmaker.databinding.ActivityPlayerBinding
 import com.example.playlistmaker.domain.player.models.MediaPlayerStatus
 import com.example.playlistmaker.domain.player.models.PlayerProgressStatus
 import com.example.playlistmaker.domain.search.model.Track
 import com.example.playlistmaker.ui.player.view_model.PlayerViewModel
-import com.example.playlistmaker.ui.player.view_model.PlayerViewModelFactory
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.text.SimpleDateFormat
 import java.util.Locale
 
 class  PlayerActivity : AppCompatActivity() {
     private lateinit var binding: ActivityPlayerBinding
-    private lateinit var viewModel: PlayerViewModel
+
+    private val viewModel by viewModel<PlayerViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,8 +27,6 @@ class  PlayerActivity : AppCompatActivity() {
         setContentView(binding.root)
         binding.timeOfPlay.text = "0:00"
 
-        viewModel =
-            ViewModelProvider(this, PlayerViewModelFactory(Creator.provideMediaPlayerInteractor()))[PlayerViewModel::class.java]
 
         @Suppress("DEPRECATION") val track =
             if (SDK_INT >= 33) {                        //Проверяем версию SDK и в зависимости от верстии применяем тот или иной метод для работы с intent

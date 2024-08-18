@@ -7,10 +7,10 @@ import com.example.playlistmaker.domain.player.models.MediaPlayerStatus
 import com.example.playlistmaker.domain.player.models.PlayerProgressStatus
 import com.example.playlistmaker.domain.search.model.Track
 
-class MediaPlayerRepositoryImpl : MediaPlayerRepository {
-
-    private val player = MediaPlayer()
-    private var playerState = MediaPlayerStatus.STATE_DEFAULT
+class MediaPlayerRepositoryImpl (
+    private var player: MediaPlayer,
+    private var playerState: MediaPlayerStatus = MediaPlayerStatus.STATE_DEFAULT
+) : MediaPlayerRepository {
     override fun preparePlayer(track: Track) {
         try {
             player.setDataSource(track.previewUrl)
