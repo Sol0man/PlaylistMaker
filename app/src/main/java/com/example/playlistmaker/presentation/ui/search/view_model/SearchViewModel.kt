@@ -1,4 +1,4 @@
-package com.example.playlistmaker.ui.search.view_model
+package com.example.playlistmaker.presentation.ui.search.view_model
 
 import android.os.Handler
 import android.os.Looper
@@ -68,7 +68,8 @@ class SearchViewModel (
             isClickAllowed = false
             handler.postDelayed(
                 { isClickAllowed = true },
-                CLICK_DEBOUNCE_DELAY)
+                CLICK_DEBOUNCE_DELAY
+            )
         }
         return current
     }

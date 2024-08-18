@@ -20,7 +20,7 @@
         <TextView
             android:text="@string/settings"
             style="@style/TextStyle"
-            android:textSize="@dimen/button_text_size"
+            android:textSize="@dimen/primary_text_size_22"
             android:textStyle="bold"
             android:layout_marginLeft="48dp"
             android:layout_marginTop="12dp"
@@ -35,7 +35,7 @@
         android:layout_marginTop="24dp">
         <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/themeSwitcher"
-            android:textSize="@dimen/text_size"
+            android:textSize="@dimen/primary_text_size_16"
             android:text="@string/dark_theme"
             style="@style/SwitchButton"
             android:layout_gravity="start"

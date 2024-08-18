@@ -1,4 +1,4 @@
-package com.example.playlistmaker.ui.player.activity
+package com.example.playlistmaker.presentation.ui.player.activity
 
 import android.os.Build.VERSION.SDK_INT
 import android.os.Bundle
@@ -11,7 +11,7 @@ import com.example.playlistmaker.databinding.ActivityPlayerBinding
 import com.example.playlistmaker.domain.player.models.MediaPlayerStatus
 import com.example.playlistmaker.domain.player.models.PlayerProgressStatus
 import com.example.playlistmaker.domain.search.model.Track
-import com.example.playlistmaker.ui.player.view_model.PlayerViewModel
+import com.example.playlistmaker.presentation.ui.player.view_model.PlayerViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.text.SimpleDateFormat
 import java.util.Locale

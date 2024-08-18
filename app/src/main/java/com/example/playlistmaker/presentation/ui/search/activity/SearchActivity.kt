@@ -1,4 +1,4 @@
-package com.example.playlistmaker.ui.search.activity
+package com.example.playlistmaker.presentation.ui.search.activity
 
 import android.content.Intent
 import android.os.Bundle
@@ -14,10 +14,10 @@ import com.example.playlistmaker.databinding.ActivitySearchBinding
 import com.example.playlistmaker.domain.search.model.SearchStatus
 import com.example.playlistmaker.domain.search.model.Track
 import com.example.playlistmaker.domain.search.model.TrackSearchResult
-import com.example.playlistmaker.ui.isNightModeOn
-import com.example.playlistmaker.ui.player.activity.PlayerActivity
-import com.example.playlistmaker.ui.search.common.TrackListAdapter
-import com.example.playlistmaker.ui.search.view_model.SearchViewModel
+import com.example.playlistmaker.presentation.isNightModeOn
+import com.example.playlistmaker.presentation.ui.player.activity.PlayerActivity
+import com.example.playlistmaker.presentation.ui.search.common.TrackListAdapter
+import com.example.playlistmaker.presentation.ui.search.view_model.SearchViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
