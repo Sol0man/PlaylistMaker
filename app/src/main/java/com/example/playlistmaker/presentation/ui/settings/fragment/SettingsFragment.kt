@@ -1,22 +1,28 @@
-package com.example.playlistmaker.presentation.ui.settings.activity
+package com.example.playlistmaker.presentation.ui.settings.fragment
 
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
-import com.example.playlistmaker.databinding.ActivitySettingsBinding
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import com.example.playlistmaker.databinding.FragmentSettingsBinding
+import com.example.playlistmaker.presentation.ui.BindingFragment
 import com.example.playlistmaker.presentation.ui.settings.view_model.SettingsViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
-class SettingsActivity : AppCompatActivity() {
-
-    private lateinit var binding: ActivitySettingsBinding
+class SettingsFragment : BindingFragment<FragmentSettingsBinding>() {
 
     private val viewModel by viewModel<SettingsViewModel>()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivitySettingsBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+    override fun createBinding(
+        inflater: LayoutInflater,
+        container: ViewGroup?
+    ): FragmentSettingsBinding {
+        return FragmentSettingsBinding.inflate(inflater, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         val nightMode: Boolean? = viewModel.nightMode.value
 
@@ -37,10 +43,6 @@ class SettingsActivity : AppCompatActivity() {
         binding.themeSwitcher.setOnCheckedChangeListener { _, checked ->
             viewModel.putNightModeSettings(checked)
             viewModel.switchTheme(checked)
-        }
-
-        binding.backButton.setOnClickListener {
-            finish()
         }
     }
 }

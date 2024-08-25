@@ -41,7 +41,7 @@
 
         <ImageView
             android:id="@+id/back_button_iv"
-            style="@style/SettingsActivityTitle"
+            style="@style/SettingsTitle"
             android:layout_width="@dimen/button_back_size"
             android:layout_height="@dimen/button_back_size"
             android:layout_gravity="center"
