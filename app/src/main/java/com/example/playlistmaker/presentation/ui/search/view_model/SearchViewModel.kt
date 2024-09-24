@@ -62,6 +62,10 @@ class SearchViewModel (
         searchHistoryInteractor.clean()
     }
 
+    fun deleteFoundTracks() {
+        foundTracks.postValue(TrackSearchResult(results = emptyList(), SearchStatus.DEFAULT))
+    }
+
     fun clickDebounce(): Boolean {
         val current = isClickAllowed
         if (isClickAllowed) {

@@ -29,7 +29,7 @@
     <string name="not_found" translatable="false">not found</string>
     <string name="title_back">Назад</string>
     <string name="media_is_empty">Ваша медиатека пуста</string>
-    <string name="playlists_not_found">Вы не создали ни одного плейлиста</string>
+    <string name="playlists_not_found">Вы не создали\nни одного плейлиста</string>
     <string name="new_playlist">Новый плейлист</string>
     <string name="favorite_tracks">Избранные треки</string>
     <string name="playlists">Плейлисты</string>

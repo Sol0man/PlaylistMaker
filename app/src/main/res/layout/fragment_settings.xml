@@ -1,47 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:theme="@style/Base.Theme.SettingsTheme"
     android:orientation="vertical"
+    tools:context=".presentation.ui.settings.fragment.SettingsFragment"
     >
 
-    <FrameLayout
+    <Toolbar
+        android:id="@+id/tb_title"
+        style="@style/SettingsTitle"
         android:layout_width="match_parent"
-        android:layout_height="48dp">
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/ys_display_medium"
+        android:title="@string/settings"
+        android:titleTextAppearance="@style/toolbar_style"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
 
-        <ImageButton
-            android:id="@+id/back_button"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_gravity="start"
-            android:src="@drawable/back" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/padding24"
+        android:minHeight="@dimen/padding60"
+        android:orientation="horizontal"
+        android:paddingHorizontal="@dimen/padding16">
+
         <TextView
-            android:text="@string/settings"
-            style="@style/TextStyle"
-            android:textSize="@dimen/primary_text_size_22"
-            android:textStyle="bold"
-            android:layout_marginLeft="48dp"
-            android:layout_marginTop="12dp"
-            android:fontFamily="@font/ys_display_medium"
-            />
-    </FrameLayout>
+            style="@style/SettingsTextColor"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:fontFamily="@font/ys_display_regular"
+            android:text="@string/dark_theme"
+            android:textSize="@dimen/primary_text_size_19"/>
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/frame_height"
-        android:paddingHorizontal="@dimen/side_indent"
-        android:layout_marginTop="24dp">
         <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/themeSwitcher"
-            android:textSize="@dimen/primary_text_size_16"
-            android:text="@string/dark_theme"
             style="@style/SwitchButton"
-            android:layout_gravity="start"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-    </FrameLayout>
+            android:layout_width="@dimen/button_switch_width"
+            android:layout_height="@dimen/button_switch_height"
+            android:layout_gravity="center" />
+
+    </LinearLayout>
 
     <FrameLayout
         android:layout_width="match_parent"

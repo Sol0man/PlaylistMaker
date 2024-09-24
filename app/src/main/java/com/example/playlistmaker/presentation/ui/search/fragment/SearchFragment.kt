@@ -1,29 +1,31 @@
-package com.example.playlistmaker.presentation.ui.search.activity
+package com.example.playlistmaker.presentation.ui.search.fragment
 
+import android.content.Context.INPUT_METHOD_SERVICE
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import com.bumptech.glide.Glide
 import com.example.playlistmaker.R
-import com.example.playlistmaker.databinding.ActivitySearchBinding
+import com.example.playlistmaker.databinding.FragmentSearchBinding
 import com.example.playlistmaker.domain.search.model.SearchStatus
 import com.example.playlistmaker.domain.search.model.Track
 import com.example.playlistmaker.domain.search.model.TrackSearchResult
 import com.example.playlistmaker.presentation.isNightModeOn
+import com.example.playlistmaker.presentation.ui.BindingFragment
 import com.example.playlistmaker.presentation.ui.player.activity.PlayerActivity
 import com.example.playlistmaker.presentation.ui.search.common.TrackListAdapter
 import com.example.playlistmaker.presentation.ui.search.view_model.SearchViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
-class SearchActivity : AppCompatActivity() {
+class SearchFragment : BindingFragment<FragmentSearchBinding>() {
     private var editTextValue = ""
-    private lateinit var binding: ActivitySearchBinding
     private lateinit var searchAdapter: TrackListAdapter
     private lateinit var historyAdapter: TrackListAdapter
     private lateinit var tracks: ArrayList<Track>
@@ -38,25 +40,27 @@ class SearchActivity : AppCompatActivity() {
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivitySearchBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+    override fun createBinding(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+    ): FragmentSearchBinding {
+        return FragmentSearchBinding.inflate(inflater, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         tracks = ArrayList<Track>()
         searchAdapter = TrackListAdapter(tracks, onClick)
         historyAdapter = TrackListAdapter(viewModel.getTracksHistory(), onClick)
 
-        viewModel.getFoundTracks().observe(this) { it ->
+        viewModel.getFoundTracks().observe(viewLifecycleOwner) { it ->
             processingSearchStatus(it)
-        }
-
-        binding.backButton.setOnClickListener {
-            finish()
         }
 
         binding.clearButton.setOnClickListener {
             binding.searchEditText.setText("")
+            viewModel.deleteFoundTracks()
             hideKeyboard()
             changeStateWhenSearchBarIsEmpty()
         }
@@ -115,13 +119,13 @@ class SearchActivity : AppCompatActivity() {
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
+        super.onDestroyView()
         viewModel.removeCallbacks()
     }
 
     private fun startPlayerActivity(track: Track) {
-        Intent(this, PlayerActivity::class.java).apply {
+        Intent(requireContext(), PlayerActivity::class.java).apply {
             putExtra(TRACK_KEY, track)
             startActivity(this)
         }
@@ -154,7 +158,7 @@ class SearchActivity : AppCompatActivity() {
 
     private fun showNotFoundError() {
         binding.tvMessageError.text = getString(R.string.not_found_error)
-        if (this.isNightModeOn()) {
+        if (requireContext().isNightModeOn()) {
             Glide.with(this)
                 .load(R.drawable.not_found_dark)
                 .into(binding.messageImage)
@@ -167,7 +171,7 @@ class SearchActivity : AppCompatActivity() {
 
     private fun showNetworkError() {
         binding.tvMessageError.text = getString(R.string.network_error)
-        if (this.isNightModeOn()) {
+        if (requireContext().isNightModeOn()) {
             Glide.with(this)
                 .load(R.drawable.network_problem_dark)
                 .into(binding.messageImage)
@@ -195,12 +199,12 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun hideKeyboard() {
-        val imm = getSystemService(INPUT_METHOD_SERVICE) as? InputMethodManager
+        val imm = requireContext().getSystemService(INPUT_METHOD_SERVICE) as? InputMethodManager
         imm?.hideSoftInputFromWindow(binding.searchEditText.windowToken, 0)
     }
 
     private fun showAndHideHistoryLayout(action: Boolean) {
-        if (action && viewModel.getTracksHistory().isNotEmpty()) {
+        if (action && viewModel.getTracksHistory().isNotEmpty() && binding.searchEditText.hasFocus()) {
             binding.historyLayout.visibility = View.VISIBLE
         } else {
             binding.historyLayout.visibility = View.GONE
