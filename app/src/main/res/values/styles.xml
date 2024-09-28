@@ -27,9 +27,7 @@
 
     <style name="SettingsBackground">
         <item name="android:background">@color/white</item>
-        <item name="android:textColor">@color/black</item>
-        <item name="backgroundTintMode">src_over</item>
-        <item name="backgroundTint">#80FFFFFF</item>
+
     </style>
 
     <style name="TextStyle">
@@ -114,6 +112,7 @@
     <style name="tab_item_style_1">
         <item name="tabTextColor">@color/black</item>
         <item name="tabIndicatorColor">@color/black</item>
+        <item name="android:background">@color/white</item>
     </style>
 
     <style name="toolbar_style">
