@@ -1,15 +1,17 @@
 package com.example.playlistmaker.presentation.ui.search.view_model
 
-import android.os.Handler
-import android.os.Looper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.domain.search.SearchHistoryInteractor
 import com.example.playlistmaker.domain.search.TrackInteractor
 import com.example.playlistmaker.domain.search.model.SearchStatus
 import com.example.playlistmaker.domain.search.model.Track
 import com.example.playlistmaker.domain.search.model.TrackSearchResult
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.util.function.Consumer
 
 class SearchViewModel (
@@ -19,27 +21,31 @@ class SearchViewModel (
 ) : ViewModel(), Consumer<TrackSearchResult> {
     private var requestText = ""
     private var isClickAllowed = true
-    private val handler = Handler(Looper.getMainLooper())
+    private var clickJob: Job? = null
+    private var searchJob: Job? = null
 
-    private var tracksHistory = searchHistoryInteractor.getTracksHistory()
+    private var tracksHistory: MutableLiveData<ArrayList<Track>> =
+        MutableLiveData(searchHistoryInteractor.getTracksHistory())
+
+    fun getTracksHistory(): LiveData<ArrayList<Track>> =
+        tracksHistory
 
     private val foundTracks: MutableLiveData<TrackSearchResult> =
         MutableLiveData(TrackSearchResult(results = emptyList(), SearchStatus.DEFAULT))
+
+    fun getFoundTracks(): LiveData<TrackSearchResult> = foundTracks
     
-    private val searchRunnable = Runnable { 
+    private fun search() {
         foundTracks.postValue(getLoadingStatus())
         sendRequest()
     }
-    fun getFoundTracks(): LiveData<TrackSearchResult> = foundTracks
-    
+
     fun removeCallbacks() {
-        handler.removeCallbacks(searchRunnable)
+        searchJob?.cancel()
     }
-    
-    fun getTracksHistory(): ArrayList<Track> = tracksHistory
 
     fun updateTrackHistory() {
-        tracksHistory = searchHistoryInteractor.getTracksHistory()
+        tracksHistory.postValue(searchHistoryInteractor.getTracksHistory())
     }
 
     fun changeRequestText(text: String) {
@@ -51,11 +57,12 @@ class SearchViewModel (
     }
 
     fun searchDebounce() {
-        handler.removeCallbacks(searchRunnable)
-        handler.postDelayed(
-            searchRunnable,
-            SEARCH_DEBOUNCE_DELAY
-        )
+        searchJob?.cancel()
+
+        searchJob = viewModelScope.launch {
+            delay(SEARCH_DEBOUNCE_DELAY)
+            search()
+        }
     }
 
     fun cleanHistory() {
@@ -69,17 +76,23 @@ class SearchViewModel (
     fun clickDebounce(): Boolean {
         val current = isClickAllowed
         if (isClickAllowed) {
-            isClickAllowed = false
-            handler.postDelayed(
-                { isClickAllowed = true },
-                CLICK_DEBOUNCE_DELAY
-            )
+            clickJob = viewModelScope.launch {
+                isClickAllowed = false
+                delay(CLICK_DEBOUNCE_DELAY)
+                isClickAllowed = true
+            }
         }
         return current
     }
 
     private fun sendRequest() {
-        trackInteractor.searchTracks(requestText, this)
+        viewModelScope.launch {
+            trackInteractor
+                .searchTracks(requestText)
+                .collect{result->
+                    foundTracks.postValue(result)
+                }
+        }
     }
     
     private fun getLoadingStatus(): TrackSearchResult {
