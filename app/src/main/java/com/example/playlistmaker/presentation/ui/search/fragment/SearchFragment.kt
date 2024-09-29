@@ -52,10 +52,14 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
 
         tracks = ArrayList<Track>()
         searchAdapter = TrackListAdapter(tracks, onClick)
-        historyAdapter = TrackListAdapter(viewModel.getTracksHistory(), onClick)
+        historyAdapter = TrackListAdapter(viewModel.getTracksHistory().value!!, onClick)
 
         viewModel.getFoundTracks().observe(viewLifecycleOwner) { it ->
             processingSearchStatus(it)
+        }
+
+        viewModel.getTracksHistory().observe(viewLifecycleOwner) { it ->
+            historyAdapter.notifyDataSetChanged()
         }
 
         binding.clearButton.setOnClickListener {
@@ -86,7 +90,7 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
                 binding.historyLayout.isVisible =
                     binding.searchEditText.hasFocus()
                             && s?.isEmpty() == true
-                            && viewModel.getTracksHistory().isNotEmpty()
+                            && viewModel.getTracksHistory().value!!.isNotEmpty()
 //
 
                 editTextValue = binding.searchEditText.text.toString()
@@ -110,7 +114,7 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
         binding.searchEditText.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus
                 && binding.searchEditText.text.isEmpty()
-                && viewModel.getTracksHistory().isNotEmpty()
+                && viewModel.getTracksHistory().value!!.isNotEmpty()
             ) {
                 updateRecyclerViewSearchHistory()
             } else {
@@ -204,7 +208,7 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
     }
 
     private fun showAndHideHistoryLayout(action: Boolean) {
-        if (action && viewModel.getTracksHistory().isNotEmpty() && binding.searchEditText.hasFocus()) {
+        if (action && viewModel.getTracksHistory().value!!.isNotEmpty() && binding.searchEditText.hasFocus()) {
             binding.historyLayout.visibility = View.VISIBLE
         } else {
             binding.historyLayout.visibility = View.GONE
@@ -214,6 +218,7 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
     private fun processingSearchStatus(trackSearchResult: TrackSearchResult) {
         tracks.clear()
         hideRecyclerView()
+        hideErrorElements()
         when (trackSearchResult.status) {
             SearchStatus.DEFAULT -> {
                 binding.progressBar.visibility = View.GONE

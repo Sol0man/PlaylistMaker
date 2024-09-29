@@ -7,13 +7,15 @@ import com.example.playlistmaker.domain.search.TrackRepository
 import com.example.playlistmaker.domain.search.model.SearchStatus
 import com.example.playlistmaker.domain.search.model.Track
 import com.example.playlistmaker.domain.search.model.TrackSearchResult
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 
 class TrackRepositoryImpl (private val networkClient: NetworkClient) : TrackRepository {
-    override fun searchTracks(expression: String): TrackSearchResult {
+    override fun searchTracks(expression: String): Flow<TrackSearchResult> = flow {
         val response = networkClient.doTrackSearchRequest(TrackSearchRequest(expression))
 
         if (response.resultStatus == SearchStatus.RESPONSE_RECEIVED) {
-            var tracks: List<Track> = (response as TrackSearchResponse).results.map {
+            val tracks: List<Track> = (response as TrackSearchResponse).results.map {
                 Track(
                     trackId = it.trackId,
                     trackName = if (it.trackName.isNullOrEmpty()) "unknown" else it.trackName,
@@ -27,15 +29,19 @@ class TrackRepositoryImpl (private val networkClient: NetworkClient) : TrackRepo
                     country = if (it.country.isNullOrEmpty()) "unknown" else it.country
                 )
             }
-            return TrackSearchResult(
-                tracks,
-                if (tracks.isEmpty()) SearchStatus.LIST_IS_EMPTY else SearchStatus.RESPONSE_RECEIVED
+            emit(
+                TrackSearchResult(
+                    tracks,
+                    if (tracks.isEmpty()) SearchStatus.LIST_IS_EMPTY else SearchStatus.RESPONSE_RECEIVED
+                )
             )
-            } else {
-                return TrackSearchResult(
+        } else {
+            emit(
+                TrackSearchResult(
                     emptyList(),
                     SearchStatus.NETWORK_ERROR
                 )
+            )
         }
     }
 }

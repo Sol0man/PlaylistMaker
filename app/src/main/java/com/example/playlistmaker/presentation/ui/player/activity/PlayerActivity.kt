@@ -25,7 +25,7 @@ class  PlayerActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityPlayerBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        binding.timeOfPlay.text = "0:00"
+        binding.timeOfPlay.text = getString(R.string.player_dafault_time)
 
 
         @Suppress("DEPRECATION") val track =
@@ -84,15 +84,15 @@ class  PlayerActivity : AppCompatActivity() {
             .into(binding.albumPage)
     }
 
-    private fun playbackControl(playerProgressStatus2: PlayerProgressStatus) {
-        when (playerProgressStatus2.mediaPlayerStatus) {
+    private fun playbackControl(playerProgressStatus: PlayerProgressStatus) {
+        when (playerProgressStatus.mediaPlayerStatus) {
             MediaPlayerStatus.STATE_PLAYING -> {
                 binding.buttonPlay.setImageResource(R.drawable.button_pause)
                 binding.timeOfPlay.text =
                     SimpleDateFormat(
                         "m:ss",
-                        Locale.getDefault())
-                        .format(playerProgressStatus2.currentPosition)
+                        Locale.getDefault()
+                    ).format(playerProgressStatus.currentPosition)
             }
             MediaPlayerStatus.STATE_PAUSED -> {
                 binding.buttonPlay.setImageResource(R.drawable.button_play)

@@ -1,7 +1,6 @@
 package com.example.playlistmaker.data.player.repositoryImpl
 
 import android.media.MediaPlayer
-import android.util.Log
 import com.example.playlistmaker.domain.player.MediaPlayerRepository
 import com.example.playlistmaker.domain.player.models.MediaPlayerStatus
 import com.example.playlistmaker.domain.player.models.PlayerProgressStatus
@@ -17,11 +16,9 @@ class MediaPlayerRepositoryImpl (
             player.prepareAsync()
             player.setOnPreparedListener {
                 playerState = MediaPlayerStatus.STATE_PREPARED
-                Log.d("NewLog", "Статус плеера $playerState")
             }
             player.setOnCompletionListener {
                 playerState = MediaPlayerStatus.STATE_PREPARED
-                Log.d("NewLog", "Статус плеера $playerState")
             }
 
         } catch (e: Exception) {
