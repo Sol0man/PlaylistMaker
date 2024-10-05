@@ -2,7 +2,10 @@ package com.example.playlistmaker.di
 
 import android.content.Context
 import android.media.MediaPlayer
+import androidx.room.Room
 import com.example.playlistmaker.data.NetworkClient
+import com.example.playlistmaker.data.converters.TrackDbConbertor
+import com.example.playlistmaker.data.db.AppDatabase
 import com.example.playlistmaker.data.search.network.ItunesApi
 import com.example.playlistmaker.data.search.network.RetrofitNetworkClient
 import org.koin.android.ext.koin.androidContext
@@ -42,4 +45,11 @@ val dataModule = module {
     factory <NetworkClient> {
         RetrofitNetworkClient(get())
     }
+
+    single {
+        Room.databaseBuilder(androidContext(), AppDatabase::class.java, "database.db")
+            .build()
+    }
+
+    factory { TrackDbConbertor() }
 }

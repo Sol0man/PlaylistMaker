@@ -11,7 +11,7 @@ import org.koin.dsl.module
 val activityModule = module {
 
     viewModel {
-        PlayerViewModel(get())
+        PlayerViewModel(get(), get(), get())
     }
 
     viewModel {
@@ -23,7 +23,7 @@ val activityModule = module {
     }
 
     viewModel {
-        MediaFavoriteFragmentViewModel()
+        MediaFavoriteFragmentViewModel(get())
     }
 
     viewModel {

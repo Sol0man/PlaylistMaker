@@ -4,18 +4,26 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.playlistmaker.domain.db.FavoriteTracksInteractor
 import com.example.playlistmaker.domain.player.MediaPlayerInteractor
 import com.example.playlistmaker.domain.player.models.MediaPlayerStatus
 import com.example.playlistmaker.domain.player.models.PlayerProgressStatus
+import com.example.playlistmaker.domain.search.SearchHistoryInteractor
 import com.example.playlistmaker.domain.search.model.Track
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class PlayerViewModel(
-    val mediaPlayerInteractor: MediaPlayerInteractor
+    private val mediaPlayerInteractor: MediaPlayerInteractor,
+    private val favoriteTracksInteractor: FavoriteTracksInteractor,
+    private val searchHistoryInteractor: SearchHistoryInteractor,
+
 ) : ViewModel() {
     private var updateTimeOfPlayJob: Job? = null
+    private var favoriteButtonJob: Job? = null
+    private var addTrackInDb: Job? = null
+    private var deleteTrackFromDb: Job? = null
 
 
     private val playerProgressStatus: MutableLiveData<PlayerProgressStatus> =
@@ -23,9 +31,13 @@ class PlayerViewModel(
 
     fun getPlayerProgressStatus(): LiveData<PlayerProgressStatus> = playerProgressStatus
 
+    private var trackAddInFavorite: MutableLiveData<Boolean> = MutableLiveData(false)
+    fun favoriteStatus(): LiveData<Boolean> = trackAddInFavorite
+
     fun onCreate(track: Track) {
         mediaPlayerInteractor.preparePlayer(track)
         playerProgressStatus.value = updatePlayerProgressStatus()
+        trackAddInFavorite.postValue(track.isFavorite)
     }
 
     private fun updatePlayerProgressStatus(): PlayerProgressStatus {
@@ -38,6 +50,9 @@ class PlayerViewModel(
 
     fun destroyMediaPlayer() {
         updateTimeOfPlayJob?.cancel()
+        favoriteButtonJob?.cancel()
+        addTrackInDb?.cancel()
+        deleteTrackFromDb?.cancel()
         mediaPlayerInteractor.destroyPlayer()
     }
 
@@ -74,6 +89,25 @@ class PlayerViewModel(
 
             MediaPlayerStatus.STATE_ERROR, MediaPlayerStatus.STATE_DEFAULT -> {
             }
+        }
+    }
+
+    fun clickButtonFavorite(track: Track) {
+        if (trackAddInFavorite.value!!) {
+            track.isFavorite = false
+            deleteTrackFromDb = viewModelScope.launch {          //удалить и изменить значение livedata
+                favoriteTracksInteractor.deleteTrackFromFavorite(track)
+            }
+            trackAddInFavorite.postValue(false)
+            searchHistoryInteractor.addTrack(track)
+        }
+        else {
+            track.isFavorite = true
+            addTrackInDb = viewModelScope.launch {
+                favoriteTracksInteractor.insertTrackToFavorite(track)
+            }
+            trackAddInFavorite.postValue(true)
+            searchHistoryInteractor.addTrack(track)
         }
     }
 
