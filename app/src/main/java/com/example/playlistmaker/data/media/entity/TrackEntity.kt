@@ -1,4 +1,4 @@
-package com.example.playlistmaker.data.db.entity
+package com.example.playlistmaker.data.media.entity
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

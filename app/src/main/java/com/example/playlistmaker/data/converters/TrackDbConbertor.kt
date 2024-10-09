@@ -1,7 +1,7 @@
 package com.example.playlistmaker.data.converters
 
 import android.icu.util.Calendar
-import com.example.playlistmaker.data.db.entity.TrackEntity
+import com.example.playlistmaker.data.media.entity.TrackEntity
 import com.example.playlistmaker.domain.search.model.Track
 
 class TrackDbConbertor {

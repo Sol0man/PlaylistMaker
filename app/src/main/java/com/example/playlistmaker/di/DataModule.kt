@@ -5,7 +5,7 @@ import android.media.MediaPlayer
 import androidx.room.Room
 import com.example.playlistmaker.data.NetworkClient
 import com.example.playlistmaker.data.converters.TrackDbConbertor
-import com.example.playlistmaker.data.db.AppDatabase
+import com.example.playlistmaker.data.media.AppDatabase
 import com.example.playlistmaker.data.search.network.ItunesApi
 import com.example.playlistmaker.data.search.network.RetrofitNetworkClient
 import org.koin.android.ext.koin.androidContext

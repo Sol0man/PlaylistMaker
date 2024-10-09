@@ -1,7 +1,7 @@
 package com.example.playlistmaker.di
 
 import com.example.playlistmaker.data.converters.TrackDbConbertor
-import com.example.playlistmaker.data.db.impl.FavoriteTracksRepositoryImpl
+import com.example.playlistmaker.data.media.impl.FavoriteTracksRepositoryImpl
 import com.example.playlistmaker.data.player.repositoryImpl.MediaPlayerRepositoryImpl
 import com.example.playlistmaker.data.search.impl.SearchHistoryRepositoryImpl
 import com.example.playlistmaker.data.search.network.impl.TrackRepositoryImpl
