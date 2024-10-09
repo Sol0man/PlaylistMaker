@@ -11,6 +11,7 @@ import com.example.playlistmaker.databinding.ActivityPlayerBinding
 import com.example.playlistmaker.domain.player.models.MediaPlayerStatus
 import com.example.playlistmaker.domain.player.models.PlayerProgressStatus
 import com.example.playlistmaker.domain.search.model.Track
+import com.example.playlistmaker.presentation.isNightModeOn
 import com.example.playlistmaker.presentation.ui.player.view_model.PlayerViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.text.SimpleDateFormat
@@ -18,6 +19,7 @@ import java.util.Locale
 
 class  PlayerActivity : AppCompatActivity() {
     private lateinit var binding: ActivityPlayerBinding
+    private var trackAddInQueue = false
 
     private val viewModel by viewModel<PlayerViewModel>()
 
@@ -42,8 +44,16 @@ class  PlayerActivity : AppCompatActivity() {
             playbackControl(playerProgressStatus)
         }
 
+        viewModel.favoriteStatus().observe(this) { favoriteStatus ->
+            changeButtonFavoriteImage(favoriteStatus)
+        }
+
         binding.backButtonIv.setOnClickListener {
             finish()
+        }
+
+        binding.ivButtonFavorite.setOnClickListener {
+            viewModel.clickButtonFavorite(track)
         }
 
         binding.buttonPlay.setOnClickListener {
@@ -108,7 +118,17 @@ class  PlayerActivity : AppCompatActivity() {
             }
         }
     }
-    fun showErrorMessage() {
+
+    private fun changeButtonFavoriteImage(trackAddInFavorite: Boolean) {
+        if (trackAddInFavorite) {
+            if (this.isNightModeOn()) binding.ivButtonFavorite.setImageResource(R.drawable.button_favorite_nm_2)
+            else binding.ivButtonFavorite.setImageResource(R.drawable.button_favorite_lm_2)
+        } else {
+            if (this.isNightModeOn()) binding.ivButtonFavorite.setImageResource(R.drawable.button_favorite_nm_1)
+            else binding.ivButtonFavorite.setImageResource(R.drawable.button_favorite_lm_1)
+        }
+    }
+    private fun showErrorMessage() {
         Toast.makeText(
             this,
             getString(R.string.audio_not_found),

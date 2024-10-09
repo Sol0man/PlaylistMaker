@@ -32,11 +32,11 @@ class MediaPlaylistsFragment: BindingFragment<MediaPlaylistsFragmentBinding>() {
         if (requireContext().isNightModeOn()) {
             Glide.with(this)
                 .load(R.drawable.not_found_dark)
-                .into(binding.ivMessageImage)
+                .into(binding.ivImageError)
         } else {
             Glide.with(this)
                 .load(R.drawable.not_found_light)
-                .into(binding.ivMessageImage)
+                .into(binding.ivImageError)
         }
     }
 

@@ -27,6 +27,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tb_title"
         app:tabTextAppearance="@style/text_appearance"
+        app:tabRippleColor="@color/yp_blue_light_alpha"
         />
 
     <androidx.viewpager2.widget.ViewPager2
