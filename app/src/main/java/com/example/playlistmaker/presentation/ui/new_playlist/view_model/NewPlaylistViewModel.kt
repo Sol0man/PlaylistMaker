@@ -16,7 +16,7 @@ class NewPlaylistViewModel(
             playlistName = albumName,
             playlistDescription = description,
             playlistImage = albumImage,
-            tracksId = "",
+            tracks = ArrayList(),
             tracksCount = 0
         )
 

@@ -5,6 +5,8 @@ import com.example.playlistmaker.data.media.AppDatabase
 import com.example.playlistmaker.data.media.entity.PlaylistEntity
 import com.example.playlistmaker.domain.db.PlaylistRepository
 import com.example.playlistmaker.domain.playlist.Playlist
+import com.example.playlistmaker.domain.search.model.Track
+import com.google.gson.Gson
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
@@ -26,11 +28,16 @@ class PlaylistRepositoryImpl(
         emit(convertFromPlaylistEntity(playlists))
     }
 
-    override suspend fun updateTracksId(playlistId: Int, tracksId: String, tracksCount: Int) {
-        appDatabase.playlistDao().updateTracksId(playlistId, tracksId, tracksCount)
+    override suspend fun updateTracks(playlistId: Int, tracks: ArrayList<Track>, tracksCount: Int) {
+        val tracksForDb = createJsonFromTracks(tracks)
+        appDatabase.playlistDao().updateTracks(playlistId, tracksForDb, tracksCount)
     }
 
     private fun convertFromPlaylistEntity(playlists: List<PlaylistEntity>) : List<Playlist> {
         return playlists.map { playlist -> playlistDbConvertor.map(playlist) }
+    }
+
+    private fun createJsonFromTracks(tracks: ArrayList<Track>): String {
+        return Gson().toJson(tracks)
     }
 }

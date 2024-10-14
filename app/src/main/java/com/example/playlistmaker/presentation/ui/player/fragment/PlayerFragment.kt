@@ -13,9 +13,12 @@ import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentPlayerBinding
 import com.example.playlistmaker.domain.player.models.MediaPlayerStatus
 import com.example.playlistmaker.domain.player.models.PlayerProgressStatus
+import com.example.playlistmaker.domain.playlist.Playlist
 import com.example.playlistmaker.domain.search.model.Track
 import com.example.playlistmaker.presentation.isNightModeOn
+import com.example.playlistmaker.presentation.ui.player.PlaylistAdapterForBottomSheet
 import com.example.playlistmaker.presentation.ui.player.view_model.PlayerViewModel
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -25,24 +28,38 @@ class PlayerFragment : Fragment() {
     private var trackAddInQueue = false
 
     private val viewModel by viewModel<PlayerViewModel>()
+    private lateinit var adapter: PlaylistAdapterForBottomSheet
+    private lateinit var playlists: ArrayList<Playlist>
+    private lateinit var track: Track
+
+    private val onClick: (playlist: Playlist) -> Unit = {
+        viewModel.addTrackInPlaylist(it, track)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentPlayerBinding.inflate(inflater, container, false)
         return binding!!.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding!!.timeOfPlay.text = getString(R.string.player_dafault_time)
 
-        val track = arguments?.getParcelable<Track>(TRACK_KEY) as Track
+        playlists = ArrayList()
+        adapter = PlaylistAdapterForBottomSheet(playlists, onClick)
+        binding!!.rvPlaylist.adapter = adapter
+        binding!!.timeOfPlay.text = getString(R.string.player_dafault_time)
+        val bottomSheetBehavior = BottomSheetBehavior.from(binding!!.playlistsBottomSheet)
+        bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+
+        track = arguments?.getParcelable<Track>(TRACK_KEY) as Track
 
         writeDataInActivity(track)
         viewModel.onCreate(track)
+        viewModel.checkPlaylistsInDb()
 
         viewModel.getPlayerProgressStatus().observe(viewLifecycleOwner) { playerProgressStatus ->
             playbackControl(playerProgressStatus)
@@ -52,12 +69,21 @@ class PlayerFragment : Fragment() {
             changeButtonFavoriteImage(favoriteStatus)
         }
 
+        viewModel.getPlaylists().observe(viewLifecycleOwner) { playlistsInDb ->
+            showPlaylistsInBottomSheet(playlistsInDb)
+        }
+
+        viewModel.getToastMessage().observe(viewLifecycleOwner) { message ->
+            showToast(message)
+        }
+
         binding!!.backButtonIv.setOnClickListener {
             findNavController().navigateUp()
         }
 
         binding!!.ibButtonQueue.setOnClickListener {
-            changeButtonQueueImage()
+            showBottomSheet()
+//            changeButtonQueueImage()
         }
 
         binding!!.ivButtonFavorite.setOnClickListener {
@@ -67,6 +93,37 @@ class PlayerFragment : Fragment() {
         binding!!.buttonPlay.setOnClickListener {
             viewModel.playbackControl()
         }
+
+        binding!!.buttonNewPlaylist.setOnClickListener {
+            findNavController().navigate(R.id.action_playerFragment_to_newPlaylistFragment)
+        }
+
+        bottomSheetBehavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+                when (newState) {
+                    BottomSheetBehavior.STATE_HIDDEN -> {
+                        binding!!.overlay.visibility = View.GONE
+                        binding!!.buttonPlay.isEnabled = true
+                        binding!!.ivButtonFavorite.isEnabled = true
+                        binding!!.ibButtonQueue.isEnabled = true
+                    }
+                    else -> {
+                        binding!!.overlay.visibility = View.VISIBLE
+                        binding!!.buttonPlay.isEnabled = false
+                        binding!!.ivButtonFavorite.isEnabled = false
+                        binding!!.ibButtonQueue.isEnabled = false
+                    }
+                }
+            }
+
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {
+
+            }
+        })
+    }
+
+    override fun onResume() {
+        super.onResume()
     }
 
     override fun onPause() {
@@ -75,9 +132,9 @@ class PlayerFragment : Fragment() {
     }
 
     override fun onDestroyView() {
-        super.onDestroyView()
-        binding = null
         viewModel.destroyMediaPlayer()
+        binding = null
+        super.onDestroyView()
     }
 
     private fun playbackControl(playerProgressStatus: PlayerProgressStatus) {
@@ -133,6 +190,10 @@ class PlayerFragment : Fragment() {
             .into(binding!!.albumPage)
     }
 
+    private fun showBottomSheet() {
+        BottomSheetBehavior.from(binding!!.playlistsBottomSheet).state = BottomSheetBehavior.STATE_COLLAPSED
+    }
+
     private fun changeButtonFavoriteImage(trackAddInFavorite: Boolean) {
         if (trackAddInFavorite) {
             if (requireContext().isNightModeOn()) binding!!.ivButtonFavorite.setImageResource(R.drawable.button_favorite_nm_2)
@@ -159,6 +220,21 @@ class PlayerFragment : Fragment() {
             getString(R.string.audio_not_found),
             Toast.LENGTH_LONG
         ).show()
+    }
+
+    private fun showPlaylistsInBottomSheet(playListsInDb: List<Playlist>){
+        playlists.clear()
+        playlists.addAll(playListsInDb)
+        adapter.notifyDataSetChanged()
+    }
+
+    private fun showToast(message: String) {
+        Toast.makeText(
+            requireContext(),
+            message,
+            Toast.LENGTH_LONG
+        ).show()
+        adapter.notifyDataSetChanged()
     }
 
     companion object {

@@ -29,7 +29,7 @@ val repositoryModule = module {
     }
 
     factory<MediaPlayerRepository> {
-        MediaPlayerRepositoryImpl(get())
+        MediaPlayerRepositoryImpl(get(), get())
     }
 
     factory<SettingsRepository> {

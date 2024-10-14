@@ -15,15 +15,15 @@ class MediaPlaylistsViewModel(private val playlistInteractor: PlaylistInteractor
     private var isClickAllowed = true
     private var clickJob: Job? = null
 
-    private val playListsLiveData: MutableLiveData<List<Playlist>> = MutableLiveData<List<Playlist>>()
-    fun getPlayLists(): LiveData<List<Playlist>> = playListsLiveData
+    private val _playlistsLiveData: MutableLiveData<List<Playlist>> = MutableLiveData<List<Playlist>>()
+    fun getPlayLists(): LiveData<List<Playlist>> = _playlistsLiveData
 
     fun checkPlaylistDb() {
         viewModelScope.launch {
             playlistInteractor
                 .getPlaylists()
-                .collect {
-                    result -> playListsLiveData.postValue(result)
+                .collect { result ->
+                    _playlistsLiveData.postValue(result)
                 }
         }
     }

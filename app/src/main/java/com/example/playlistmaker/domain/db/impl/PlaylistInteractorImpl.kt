@@ -3,6 +3,7 @@ package com.example.playlistmaker.domain.db.impl
 import com.example.playlistmaker.domain.db.PlaylistInteractor
 import com.example.playlistmaker.domain.db.PlaylistRepository
 import com.example.playlistmaker.domain.playlist.Playlist
+import com.example.playlistmaker.domain.search.model.Track
 import kotlinx.coroutines.flow.Flow
 
 class PlaylistInteractorImpl(
@@ -20,7 +21,7 @@ class PlaylistInteractorImpl(
         return playlistRepository.getPlaylists()
     }
 
-    override suspend fun updateTracksId(playlistId: Int, tracksId: String, tracksCount: Int) {
-        playlistRepository.updateTracksId(playlistId, tracksId, tracksCount)
+    override suspend fun updateTracks(playlistId: Int, tracks: ArrayList<Track>, tracksCount: Int) {
+        playlistRepository.updateTracks(playlistId, tracks, tracksCount)
     }
 }
