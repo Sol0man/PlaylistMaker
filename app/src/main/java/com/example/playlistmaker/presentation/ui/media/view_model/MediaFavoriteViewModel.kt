@@ -11,7 +11,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class MediaFavoriteFragmentViewModel(
+class MediaFavoriteViewModel(
     private val favoriteTracksInteractor: FavoriteTracksInteractor
 ): ViewModel() {
 
@@ -39,7 +39,7 @@ class MediaFavoriteFragmentViewModel(
         if (isClickAllowed) {
             clickJob = viewModelScope.launch(Dispatchers.IO) {
                 isClickAllowed = false
-                delay(MediaFavoriteFragmentViewModel.CLICK_DEBOUNCE_DELAY)
+                delay(MediaFavoriteViewModel.CLICK_DEBOUNCE_DELAY)
                 isClickAllowed = true
             }
         }

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".presentation.ui.player.activity.PlayerActivity">
+    tools:context=".presentation.ui.player.fragment.PlayerFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/main"
@@ -201,7 +201,7 @@
             tools:text="1965" />
 
         <TextView
-            android:id="@+id/album"
+            android:id="@+id/iv_album"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/padding16"
@@ -228,10 +228,10 @@
             android:maxLines="1"
             android:textAlignment="textEnd"
             android:textSize="@dimen/primary_text_size_13"
-            app:layout_constraintBottom_toBottomOf="@id/album"
+            app:layout_constraintBottom_toBottomOf="@id/iv_album"
             app:layout_constraintEnd_toEndOf="@id/rightBorder_16"
             app:layout_constraintHorizontal_weight="7"
-            app:layout_constraintStart_toEndOf="@id/album"
+            app:layout_constraintStart_toEndOf="@id/iv_album"
             tools:text="Yesterday(Remastered 2009)" />
 
         <TextView
@@ -246,7 +246,7 @@
             android:textColor="@color/yp_text_gray"
             android:textSize="@dimen/primary_text_size_13"
             android:text="@string/duration"
-            app:layout_constraintBottom_toTopOf="@id/album"
+            app:layout_constraintBottom_toTopOf="@id/iv_album"
             app:layout_constraintEnd_toStartOf="@id/track_duration"
             app:layout_constraintHorizontal_weight="3"
             app:layout_constraintStart_toStartOf="@id/leftBorder_16"

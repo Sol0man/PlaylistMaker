@@ -1,7 +1,6 @@
 package com.example.playlistmaker.presentation.ui.search.fragment
 
 import android.content.Context.INPUT_METHOD_SERVICE
-import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -10,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.core.view.isVisible
+import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentSearchBinding
@@ -18,7 +18,7 @@ import com.example.playlistmaker.domain.search.model.Track
 import com.example.playlistmaker.domain.search.model.TrackSearchResult
 import com.example.playlistmaker.presentation.isNightModeOn
 import com.example.playlistmaker.presentation.ui.BindingFragment
-import com.example.playlistmaker.presentation.ui.player.activity.PlayerActivity
+import com.example.playlistmaker.presentation.ui.main.MainActivity
 import com.example.playlistmaker.presentation.ui.search.common.TrackListAdapter
 import com.example.playlistmaker.presentation.ui.search.view_model.SearchViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -125,6 +125,7 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
 
     override fun onResume() {
         super.onResume()
+        (activity as? MainActivity)?.showNavBar()
         viewModel.updateTrackHistory()
     }
 
@@ -134,10 +135,12 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
     }
 
     private fun startPlayerActivity(track: Track) {
-        Intent(requireContext(), PlayerActivity::class.java).apply {
-            putExtra(TRACK_KEY, track)
-            startActivity(this)
-        }
+
+        (activity as? MainActivity)?.hideNavBar()
+
+        val bundle = Bundle()
+        bundle.putParcelable(TRACK_KEY, track)
+        findNavController().navigate(R.id.action_searchFragment_to_playerFragment)
     }
 
     private fun updateRecyclerViewSearchHistory() {

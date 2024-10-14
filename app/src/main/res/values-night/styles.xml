@@ -108,4 +108,8 @@
         <item name="itemIconTint">@color/bottom_nav_color_dark</item>
         <item name="android:background">@color/yp_black</item>
     </style>
+
+    <style name="new_playlist_edit_text_style" parent="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+    </style>
 </resources>

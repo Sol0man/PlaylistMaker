@@ -1,7 +1,7 @@
 package com.example.playlistmaker.di
 
-import com.example.playlistmaker.presentation.ui.media.view_model.MediaFavoriteFragmentViewModel
-import com.example.playlistmaker.presentation.ui.media.view_model.MediaPlaylistsFragmentViewModel
+import com.example.playlistmaker.presentation.ui.media.view_model.MediaFavoriteViewModel
+import com.example.playlistmaker.presentation.ui.media.view_model.MediaPlaylistsViewModel
 import com.example.playlistmaker.presentation.ui.player.view_model.PlayerViewModel
 import com.example.playlistmaker.presentation.ui.search.view_model.SearchViewModel
 import com.example.playlistmaker.presentation.ui.settings.view_model.SettingsViewModel
@@ -23,10 +23,10 @@ val activityModule = module {
     }
 
     viewModel {
-        MediaFavoriteFragmentViewModel(get())
+        MediaFavoriteViewModel(get())
     }
 
     viewModel {
-        MediaPlaylistsFragmentViewModel()
+        MediaPlaylistsViewModel(get())
     }
 }
