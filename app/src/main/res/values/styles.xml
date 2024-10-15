@@ -156,5 +156,17 @@
         <item name="android:textColor">@color/black</item>
     </style>
 
+    <style name="playlist_create_album_image">
+        <item name="android:backgroundTint">@color/white</item>
+    </style>
+
+    <style name="bottom_sheet_style">
+        <item name="android:backgroundTint">@color/white</item>
+    </style>
+
+    <style name="bottom_sheet_view_style">
+        <item name="android:backgroundTint">@color/yp_text_gray</item>
+    </style>
+
 
 </resources>

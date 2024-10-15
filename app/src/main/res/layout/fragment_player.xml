@@ -332,7 +332,7 @@
 
     <LinearLayout
         android:id="@+id/playlists_bottom_sheet"
-        style="@style/bottom_sheet_player"
+        style="@style/bottom_sheet_style"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/bottom_sheet_background"

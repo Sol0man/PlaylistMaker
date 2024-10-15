@@ -20,16 +20,16 @@ class MediaFavoriteViewModel(
     private var dataBaseJob: Job? = null
 
 
-    private val favoriteTracks: MutableLiveData<List<Track>> =
+    private val _favoriteTracks: MutableLiveData<List<Track>> =
         MutableLiveData(ArrayList<Track>())
 
-    fun getFavoriteTracks(): LiveData<List<Track>> =
-        favoriteTracks
+    fun favoriteTracks(): LiveData<List<Track>> =
+        _favoriteTracks
 
     fun onCreate() {
         dataBaseJob = viewModelScope.launch(Dispatchers.IO) {
             favoriteTracksInteractor.getAllFavoriteTracks().collect { it ->
-                favoriteTracks.postValue(it)
+                _favoriteTracks.postValue(it)
             }
         }
     }

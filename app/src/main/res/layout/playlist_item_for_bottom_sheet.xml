@@ -28,6 +28,7 @@
 
     <TextView
         android:id="@+id/tv_playlist_name"
+        style="@style/bottom_sheet_title_style"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/padding4"
@@ -41,6 +42,7 @@
 
     <TextView
         android:id="@+id/tv_tracks_count"
+        style="@style/bottom_sheet_title_style"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginVertical="@dimen/padding4"

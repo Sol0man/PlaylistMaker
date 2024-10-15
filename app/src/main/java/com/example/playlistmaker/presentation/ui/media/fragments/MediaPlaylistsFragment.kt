@@ -46,7 +46,7 @@ class MediaPlaylistsFragment: BindingFragment<MediaPlaylistsFragmentBinding>() {
         binding.rvPlaylists.adapter = adapter
 
         viewModel.checkPlaylistDb()
-        viewModel.getPlayLists().observe(viewLifecycleOwner) {
+        viewModel.playLists().observe(viewLifecycleOwner) {
             showPlaylists(it)
         }
 

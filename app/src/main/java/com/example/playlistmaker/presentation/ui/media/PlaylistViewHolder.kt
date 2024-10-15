@@ -20,7 +20,7 @@ class PlaylistViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
     fun bind(model: Playlist) {
         playlistName.text = model.playlistName
-        tracksCount.text = model.tracksCount.toString() + " " + getWord(model.tracksCount)
+        tracksCount.text = model.tracksCount.toString() + " " + itemView.context.resources.getQuantityString(R.plurals.plurals, model.tracksCount)
 
         val filePath =
             File(itemView.context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), DIRECTORY)
@@ -31,13 +31,6 @@ class PlaylistViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             .centerCrop()
             .transform(RoundedCorners(itemView.resources.getDimensionPixelSize(R.dimen.rounded_corners_radius)))
             .into(playlistImage)
-    }
-
-    private fun getWord(count: Int): String {
-        if (count == 0) return itemView.context.getString(R.string.more_that_one_track_2)
-        if ((count >= 5) && (count <= 20)) return itemView.context.getString(R.string.more_that_one_track_2)
-        if (count % 10 == 1) return itemView.context.getString(R.string.one_track)
-        return itemView.context.getString(R.string.more_that_one_track_1)
     }
 
     companion object {

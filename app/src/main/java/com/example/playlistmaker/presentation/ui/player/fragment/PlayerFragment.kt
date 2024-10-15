@@ -57,23 +57,24 @@ class PlayerFragment : Fragment() {
 
         track = arguments?.getParcelable<Track>(TRACK_KEY) as Track
 
+
         writeDataInActivity(track)
         viewModel.onCreate(track)
         viewModel.checkPlaylistsInDb()
 
-        viewModel.getPlayerProgressStatus().observe(viewLifecycleOwner) { playerProgressStatus ->
+        viewModel.playerProgressStatus().observe(viewLifecycleOwner) { playerProgressStatus ->
             playbackControl(playerProgressStatus)
         }
 
-        viewModel.favoriteStatus().observe(viewLifecycleOwner) { favoriteStatus ->
+        viewModel.trackAddInFavorite().observe(viewLifecycleOwner) { favoriteStatus ->
             changeButtonFavoriteImage(favoriteStatus)
         }
 
-        viewModel.getPlaylists().observe(viewLifecycleOwner) { playlistsInDb ->
+        viewModel.playlistsLiveData().observe(viewLifecycleOwner) { playlistsInDb ->
             showPlaylistsInBottomSheet(playlistsInDb)
         }
 
-        viewModel.getToastMessage().observe(viewLifecycleOwner) { message ->
+        viewModel.toastMessage().observe(viewLifecycleOwner) { message ->
             showToast(message)
         }
 
@@ -132,9 +133,13 @@ class PlayerFragment : Fragment() {
     }
 
     override fun onDestroyView() {
-        viewModel.destroyMediaPlayer()
         binding = null
         super.onDestroyView()
+    }
+
+    override fun onDestroy() {
+        viewModel.destroyMediaPlayer()
+        super.onDestroy()
     }
 
     private fun playbackControl(playerProgressStatus: PlayerProgressStatus) {
@@ -201,16 +206,6 @@ class PlayerFragment : Fragment() {
         } else {
             if (requireContext().isNightModeOn()) binding!!.ivButtonFavorite.setImageResource(R.drawable.button_favorite_nm_1)
             else binding!!.ivButtonFavorite.setImageResource(R.drawable.button_favorite_lm_1)
-        }
-    }
-
-    private fun changeButtonQueueImage() {
-        if (trackAddInQueue) {
-            trackAddInQueue = false
-            binding!!.ibButtonQueue.setImageResource(R.drawable.button_queue)
-        } else {
-            trackAddInQueue = true
-            binding!!.ibButtonQueue.setImageResource(R.drawable.button_add_in_queue)
         }
     }
 
