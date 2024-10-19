@@ -40,7 +40,7 @@ class MediaPlaylistsViewModel(private val playlistInteractor: PlaylistInteractor
         return current
     }
 
-    companion object {
+    private companion object {
         private const val CLICK_DEBOUNCE_DELAY = 1000L
     }
 }

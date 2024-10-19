@@ -19,7 +19,7 @@ class PlaylistViewHolderForBottomSheet (itemView: View) : RecyclerView.ViewHolde
 
     fun bind(model: Playlist) {
         playlistName.text = model.playlistName
-        tracksCount.text = model.tracksCount.toString() + " " + model.tracksCount.toString() + " " + itemView.context.resources.getQuantityString(R.plurals.plurals, model.tracksCount)
+        tracksCount.text = model.tracksCount.toString() + " "  + itemView.context.resources.getQuantityString(R.plurals.plurals, model.tracksCount)
 
         val filePath =
             File(itemView.context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), DIRECTORY)

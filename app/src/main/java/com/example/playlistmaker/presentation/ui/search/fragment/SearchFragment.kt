@@ -140,7 +140,7 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
 
         val bundle = Bundle()
         bundle.putParcelable(TRACK_KEY, track)
-        findNavController().navigate(R.id.action_searchFragment_to_playerFragment)
+        findNavController().navigate(R.id.action_searchFragment_to_playerFragment, bundle)
     }
 
     private fun updateRecyclerViewSearchHistory() {
@@ -149,13 +149,6 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
         historyAdapter.notifyDataSetChanged()
     }
 
-    private fun clearButtonVisibility(s: CharSequence?): Int {
-        return if (s.isNullOrEmpty()) {
-            View.GONE
-        } else {
-            View.VISIBLE
-        }
-    }
 
     private fun showImageError(typeError: SearchStatus) {
         if (typeError == SearchStatus.LIST_IS_EMPTY) {

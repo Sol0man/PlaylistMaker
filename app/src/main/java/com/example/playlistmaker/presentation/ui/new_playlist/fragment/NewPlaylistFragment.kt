@@ -1,5 +1,6 @@
 package com.example.playlistmaker.presentation.ui.new_playlist.fragment
 
+import android.content.res.ColorStateList
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.icu.util.Calendar
@@ -14,9 +15,11 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.findNavController
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.NewPlaylistCreateFragmentBinding
+import com.example.playlistmaker.presentation.isNightModeOn
 import com.example.playlistmaker.presentation.ui.BindingFragment
 import com.example.playlistmaker.presentation.ui.new_playlist.view_model.NewPlaylistViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -39,6 +42,63 @@ class NewPlaylistFragment : BindingFragment<NewPlaylistCreateFragmentBinding>() 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val tilName = binding.tilPlaylistName
+        val tietName = binding.tietPlaylistName
+        val tilDescription = binding.tilPlaylistDescription
+        val tietDescription = binding.tietPlaylistDescription
+
+        if (requireContext().isNightModeOn()) {
+
+            tilName.setBoxStrokeColorStateList(
+                ContextCompat.getColorStateList(requireContext(), R.color.text_input_layout_color_night)!!          //смена цвета в зависимости от темной темы
+            )
+            tilName.defaultHintTextColor =
+                ColorStateList.valueOf(
+                    ContextCompat.getColor(requireContext(), R.color.white)
+                )
+
+            tilDescription.setBoxStrokeColorStateList(
+                ContextCompat.getColorStateList(requireContext(), R.color.text_input_layout_color_night)!!
+            )
+
+            tilDescription.defaultHintTextColor =
+                ColorStateList.valueOf(
+                    ContextCompat.getColor(requireContext(), R.color.white)
+                )
+
+        } else {
+            tilName.setBoxStrokeColorStateList(
+                ContextCompat.getColorStateList(requireContext(), R.color.text_input_layout_color)!!
+            )
+
+            tilName.defaultHintTextColor =
+                ColorStateList.valueOf(
+                    ContextCompat.getColor(requireContext(), R.color.yp_text_gray)
+                )
+
+            tilDescription.setBoxStrokeColorStateList(
+                ContextCompat.getColorStateList(requireContext(), R.color.text_input_layout_color)!!
+            )
+
+            tilDescription.defaultHintTextColor =
+                ColorStateList.valueOf(
+                    ContextCompat.getColor(requireContext(), R.color.yp_text_gray)
+                )
+        }
+
+
+        tietName.setOnFocusChangeListener { _, hasFocus ->                              //смена цвета hint'a в зависимости от фокуса
+            if (hasFocus) {
+                // При фокусе меняем цвет на синий
+                tilName.defaultHintTextColor = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.yp_blue))
+            } else {
+                // Возвращаем серый цвет при потере фокуса
+                tilName.defaultHintTextColor = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.yp_text_gray))
+            }
+        }
+
+
+
 
         dialog = MaterialAlertDialogBuilder(requireContext()).apply {
             setTitle(getString(R.string.complete_create_playlist))
@@ -79,9 +139,11 @@ class NewPlaylistFragment : BindingFragment<NewPlaylistCreateFragmentBinding>() 
                     binding.ivAlbum.setImageURI(uri)
                     albumImageUri = uri
                 } else {
-
+                    binding.ivAlbum.setImageResource(R.drawable.placeholder)
                 }
             }
+
+        binding.ivAlbum.setImageResource(R.drawable.placeholder)
 
         binding.ivAlbum.setOnClickListener {
             pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
@@ -101,7 +163,7 @@ class NewPlaylistFragment : BindingFragment<NewPlaylistCreateFragmentBinding>() 
 
             Toast.makeText(
                 requireContext(),
-                String.format("Плейлист $albumName создан"),
+                String.format("${getString(R.string.playlist)} $albumName ${getString(R.string.created)}"),
                 Toast.LENGTH_SHORT
             ).show()
             findNavController().navigateUp()

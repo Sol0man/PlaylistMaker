@@ -53,9 +53,9 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/til_playlist_name"
+        android:theme="@style/TextInputLayoutAppearance"
         style="@style/new_playlist_text_input_layout_style"
         android:hint="@string/name"
-        app:boxStrokeColor="@color/yp_text_gray"
         app:hintTextColor="@color/yp_text_gray"
         android:layout_marginTop="@dimen/height40"
         android:layout_marginHorizontal="@dimen/padding16"
@@ -72,18 +72,17 @@
             android:maxLength="225"
             android:lines="1"
             android:singleLine="true"
-            android:textCursorDrawable="@drawable/edit_text_cursor"
             />
 
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/til_playlist_description"
+        android:theme="@style/TextInputLayoutAppearance"
         style="@style/new_playlist_text_input_layout_style"
         android:layout_marginHorizontal="@dimen/padding16"
         android:layout_marginTop="@dimen/padding16"
         android:hint="@string/description"
-        app:boxStrokeColor="@color/yp_text_gray"
         app:hintTextColor="@color/yp_text_gray"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/til_playlist_name"
@@ -95,10 +94,9 @@
             android:layout_height="wrap_content"
             android:inputType="textCapSentences"
             android:maxLines="1"
-            android:maxLength="225"
             android:singleLine="true"
-            android:textSize="@dimen/primary_text_size_16"
-            android:textCursorDrawable="@drawable/edit_text_cursor"/>
+            android:maxLength="225"
+            android:textSize="@dimen/primary_text_size_16" />
 
     </com.google.android.material.textfield.TextInputLayout>
 

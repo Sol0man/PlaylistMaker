@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
@@ -103,13 +104,13 @@ class PlayerFragment : Fragment() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
                 when (newState) {
                     BottomSheetBehavior.STATE_HIDDEN -> {
-                        binding!!.overlay.visibility = View.GONE
+                        binding!!.overlay.isVisible = false
                         binding!!.buttonPlay.isEnabled = true
                         binding!!.ivButtonFavorite.isEnabled = true
                         binding!!.ibButtonQueue.isEnabled = true
                     }
                     else -> {
-                        binding!!.overlay.visibility = View.VISIBLE
+                        binding!!.overlay.isVisible = true
                         binding!!.buttonPlay.isEnabled = false
                         binding!!.ivButtonFavorite.isEnabled = false
                         binding!!.ibButtonQueue.isEnabled = false
@@ -206,6 +207,16 @@ class PlayerFragment : Fragment() {
         } else {
             if (requireContext().isNightModeOn()) binding!!.ivButtonFavorite.setImageResource(R.drawable.button_favorite_nm_1)
             else binding!!.ivButtonFavorite.setImageResource(R.drawable.button_favorite_lm_1)
+        }
+    }
+
+    private fun changeButtonQueueImage() {
+        if (trackAddInQueue) {
+            trackAddInQueue = false
+            binding!!.ibButtonQueue.setImageResource(R.drawable.button_queue)
+        } else {
+            trackAddInQueue = true
+            binding!!.ibButtonQueue.setImageResource(R.drawable.button_add_in_queue)
         }
     }
 

@@ -3,11 +3,12 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_margin="3dp"
     android:orientation="vertical"
-    android:padding="@dimen/padding8">
+    android:layout_marginLeft="@dimen/padding8"
+    android:layout_marginBottom="@dimen/padding16"
+    >
 
 
     <androidx.cardview.widget.CardView
@@ -27,6 +28,7 @@
 
     <TextView
         android:id="@+id/tv_playlist_name"
+        style="@style/playlist_title_style"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/padding4"
@@ -37,6 +39,7 @@
         tools:text="Название альбома" />
     <TextView
         android:id="@+id/tv_tracks_count"
+        style="@style/playlist_title_style"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginVertical="@dimen/padding4"

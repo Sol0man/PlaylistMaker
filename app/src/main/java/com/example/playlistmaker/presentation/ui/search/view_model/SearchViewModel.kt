@@ -24,7 +24,7 @@ class SearchViewModel (
     private var clickJob: Job? = null
     private var searchJob: Job? = null
 
-    private var _tracksHistory: MutableLiveData<ArrayList<Track>> =
+    private val _tracksHistory: MutableLiveData<ArrayList<Track>> =
         MutableLiveData(searchHistoryInteractor.getTracksHistory())
 
     fun tracksHistory(): LiveData<ArrayList<Track>> =
