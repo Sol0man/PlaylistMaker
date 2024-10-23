@@ -23,12 +23,6 @@ class MediaFavoriteFragment: BindingFragment<MediaFavoriteFragmentBinding>() {
     private lateinit var tracks: ArrayList<Track>
     private val viewModel by viewModel<MediaFavoriteViewModel>()
 
-    private val onClick: (track: Track) -> Unit = {
-        if (viewModel.clickDebounce()) {
-            startPlayerActivity(it)
-        }
-    }
-
     override fun createBinding(
         inflater: LayoutInflater,
         container: ViewGroup?
@@ -39,9 +33,15 @@ class MediaFavoriteFragment: BindingFragment<MediaFavoriteFragmentBinding>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         tracks = ArrayList<Track>()
-        adapter = TrackListAdapter(tracks, onClick)
+        adapter = TrackListAdapter(tracks)
         viewModel.onCreate()
         binding.rvFavoriteTracks.adapter = adapter
+
+        adapter.itemClickListener = { track ->
+            if (viewModel.clickDebounce()) {
+                startPlayerActivity(track)
+            }
+        }
 
         viewModel.favoriteTracks().observe(viewLifecycleOwner) {
             showFavoriteTrackList(it)
@@ -92,7 +92,7 @@ class MediaFavoriteFragment: BindingFragment<MediaFavoriteFragmentBinding>() {
 
         val bundle = Bundle()
         bundle.putParcelable(MediaFavoriteFragment.TRACK_KEY, track)
-        findNavController().navigate(R.id.action_mediaFragment_to_playerFragment)
+        findNavController().navigate(R.id.action_mediaFragment_to_playerFragment, bundle)
     }
 
     companion object {

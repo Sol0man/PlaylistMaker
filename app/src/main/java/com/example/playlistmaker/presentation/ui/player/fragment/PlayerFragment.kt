@@ -11,6 +11,7 @@ import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
+import com.example.playlistmaker.data.media.entity.TrackInPlaylistEntity
 import com.example.playlistmaker.databinding.FragmentPlayerBinding
 import com.example.playlistmaker.domain.player.models.MediaPlayerStatus
 import com.example.playlistmaker.domain.player.models.PlayerProgressStatus
@@ -32,9 +33,10 @@ class PlayerFragment : Fragment() {
     private lateinit var adapter: PlaylistAdapterForBottomSheet
     private lateinit var playlists: ArrayList<Playlist>
     private lateinit var track: Track
+    private var trackInPlaylistEntity = TrackInPlaylistEntity(playlistId = 0, trackId = "")
 
     private val onClick: (playlist: Playlist) -> Unit = {
-        viewModel.addTrackInPlaylist(it, track)
+        viewModel.addTrackInPlaylist(it, track, trackInPlaylistEntity, getString(R.string.already_added), getString(R.string.added_to_playlist))
     }
 
     override fun onCreateView(
@@ -56,8 +58,7 @@ class PlayerFragment : Fragment() {
         val bottomSheetBehavior = BottomSheetBehavior.from(binding!!.playlistsBottomSheet)
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
 
-        track = arguments?.getParcelable<Track>(TRACK_KEY) as Track
-
+        track = (arguments?.getParcelable<Track>(TRACK_KEY) as Track)
 
         writeDataInActivity(track)
         viewModel.onCreate(track)

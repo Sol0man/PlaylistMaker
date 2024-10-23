@@ -32,14 +32,6 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
 
     private val viewModel by viewModel<SearchViewModel>()
 
-    private val onClick: (track: Track) -> Unit = {
-        if (viewModel.clickDebounce()) {
-            viewModel.addTrackInSearchHistory(it)
-            historyAdapter.notifyDataSetChanged()
-            startPlayerActivity(it)
-        }
-    }
-
     override fun createBinding(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -51,8 +43,24 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
         super.onViewCreated(view, savedInstanceState)
 
         tracks = ArrayList<Track>()
-        searchAdapter = TrackListAdapter(tracks, onClick)
-        historyAdapter = TrackListAdapter(viewModel.tracksHistory().value!!, onClick)
+        searchAdapter = TrackListAdapter(tracks)
+        historyAdapter = TrackListAdapter(viewModel.tracksHistory().value!!)
+
+        searchAdapter.itemClickListener = { track ->
+            if (viewModel.clickDebounce()) {
+                viewModel.addTrackInSearchHistory(track)
+                historyAdapter.notifyDataSetChanged()
+                startPlayerActivity(track)
+            }
+        }
+
+        historyAdapter.itemClickListener = { track ->
+            if (viewModel.clickDebounce()) {
+                viewModel.addTrackInSearchHistory(track)
+                historyAdapter.notifyDataSetChanged()
+                startPlayerActivity(track)
+            }
+        }
 
         viewModel.foundTracks().observe(viewLifecycleOwner) { it ->
             processingSearchStatus(it)

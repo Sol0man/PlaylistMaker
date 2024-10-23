@@ -13,6 +13,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
@@ -124,6 +125,7 @@ class NewPlaylistFragment : BindingFragment<NewPlaylistCreateFragmentBinding>() 
 
         binding.tietPlaylistName.addTextChangedListener(simpleTextWatcher)
 
+        // показывает диалог при нажатии на кнопку "Назад"
         binding.ivButtonBack.setOnClickListener {
             if (albumImageUri != null || !binding.tietPlaylistName.text.isNullOrEmpty() ||
                 !binding.tietPlaylistDescription.text.isNullOrEmpty()) {
@@ -132,6 +134,18 @@ class NewPlaylistFragment : BindingFragment<NewPlaylistCreateFragmentBinding>() 
                 findNavController().navigateUp()
             }
         }
+
+        // показывает диалог при нажатии на системную кнопку "Назад"
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (albumImageUri != null || !binding.tietPlaylistName.text.isNullOrEmpty() ||
+                    !binding.tietPlaylistDescription.text.isNullOrEmpty()) {
+                    dialog.show()
+                } else {
+                    findNavController().navigateUp()
+                }
+            }
+        })
 
         val pickMedia =
             registerForActivityResult(ActivityResultContracts.PickVisualMedia()) {uri->

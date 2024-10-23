@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.playlistmaker.data.media.entity.TrackInPlaylistEntity
 import com.example.playlistmaker.domain.db.FavoriteTracksInteractor
 import com.example.playlistmaker.domain.db.PlaylistInteractor
 import com.example.playlistmaker.domain.player.MediaPlayerInteractor
@@ -27,7 +28,6 @@ class PlayerViewModel(
     private var favoriteButtonJob: Job? = null
     private var addTrackInDb: Job? = null
     private var deleteTrackFromDb: Job? = null
-
 
     private val _playerProgressStatus: MutableLiveData<PlayerProgressStatus> =
         MutableLiveData(updatePlayerProgressStatus())
@@ -143,16 +143,19 @@ class PlayerViewModel(
         }
     }
 
-    fun addTrackInPlaylist(playlist: Playlist, track: Track) {
+    fun addTrackInPlaylist(playlist: Playlist, track: Track, trackInPlaylist: TrackInPlaylistEntity, alreadyAdded: String, addedToPlaylist: String) {
+
         if (playlist.tracks.contains(track)) {
-            _toastMessage.value = "Трек уже добавлен в плейлист ${playlist.playlistName}"
+            _toastMessage.value = "$alreadyAdded ${playlist.playlistName}"
         } else {
             val tracks = playlist.tracks
             tracks.add(track)
             viewModelScope.launch {
-                playlistInteractor.updateTracks(playlist.id, tracks, playlist.tracksCount + 1)
+                playlistInteractor.updateTracksCount(playlist.id, playlist.tracksCount + 1)
+                playlistInteractor.insertTrack(trackInPlaylist)
+
             }
-            _toastMessage.value = "Добавлено в плейлист ${playlist.playlistName}"
+            _toastMessage.value = "$addedToPlaylist ${playlist.playlistName}"
             checkPlaylistsInDb()
         }
     }
