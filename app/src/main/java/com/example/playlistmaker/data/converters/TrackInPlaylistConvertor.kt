@@ -1,12 +1,12 @@
 package com.example.playlistmaker.data.converters
 
 import android.icu.util.Calendar
-import com.example.playlistmaker.data.media.entity.TrackEntity
+import com.example.playlistmaker.data.media.entity.TrackInPlaylistEntity
 import com.example.playlistmaker.domain.search.model.Track
 
-class TrackDbConbertor {
+class TrackInPlaylistConvertor {
 
-    fun map(track: TrackEntity): Track {
+    fun map(track: TrackInPlaylistEntity): Track {
         return Track(
             track.trackId,
             track.trackName,
@@ -22,8 +22,8 @@ class TrackDbConbertor {
         )
     }
 
-    fun map(track: Track): TrackEntity {
-        return TrackEntity(
+    fun map(track: Track): TrackInPlaylistEntity {
+        return TrackInPlaylistEntity(
             track.trackId,
             track.trackName,
             track.artistName,
