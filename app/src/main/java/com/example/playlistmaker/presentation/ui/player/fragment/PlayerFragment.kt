@@ -33,10 +33,10 @@ class PlayerFragment : Fragment() {
     private lateinit var adapter: PlaylistAdapterForBottomSheet
     private lateinit var playlists: ArrayList<Playlist>
     private lateinit var track: Track
-    private var trackInPlaylistEntity = TrackInPlaylistEntity(playlistId = 0, trackId = "")
+
 
     private val onClick: (playlist: Playlist) -> Unit = {
-        viewModel.addTrackInPlaylist(it, track, trackInPlaylistEntity, getString(R.string.already_added), getString(R.string.added_to_playlist))
+        viewModel.addTrackInPlaylist(it, track, getString(R.string.already_added), getString(R.string.added_to_playlist))
     }
 
     override fun onCreateView(

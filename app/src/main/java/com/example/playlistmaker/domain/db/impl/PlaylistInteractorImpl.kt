@@ -1,9 +1,9 @@
 package com.example.playlistmaker.domain.db.impl
 
-import com.example.playlistmaker.data.media.entity.TrackInPlaylistEntity
 import com.example.playlistmaker.domain.db.PlaylistInteractor
 import com.example.playlistmaker.domain.db.PlaylistRepository
 import com.example.playlistmaker.domain.playlist.Playlist
+import com.example.playlistmaker.domain.search.model.Track
 import kotlinx.coroutines.flow.Flow
 
 class PlaylistInteractorImpl(
@@ -17,12 +17,12 @@ class PlaylistInteractorImpl(
         return playlistRepository.getPlaylists()
     }
 
-    override suspend fun updateTracksCount(playlistId: Int, tracksCount: Int) {
-        playlistRepository.updateTracksCount(playlistId, tracksCount)
+    override suspend fun updateTracksCount(playlistId: Int, tracksCount: Int, tracksId: String) {
+        playlistRepository.updateTracksCount(playlistId, tracksCount, tracksId)
     }
 
-    override suspend fun insertTrack(track: TrackInPlaylistEntity) {
-        playlistRepository.insertTrack(track)
+    override suspend fun insertTrackInPlaylist(track: Track) {
+        playlistRepository.insertTrackInPlaylist(track)
     }
 
 }

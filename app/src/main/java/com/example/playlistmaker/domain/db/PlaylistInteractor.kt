@@ -1,7 +1,7 @@
 package com.example.playlistmaker.domain.db
 
-import com.example.playlistmaker.data.media.entity.TrackInPlaylistEntity
 import com.example.playlistmaker.domain.playlist.Playlist
+import com.example.playlistmaker.domain.search.model.Track
 import kotlinx.coroutines.flow.Flow
 
 interface PlaylistInteractor {
@@ -10,8 +10,8 @@ interface PlaylistInteractor {
 
     fun getPlaylists(): Flow<List<Playlist>>
 
-    suspend fun updateTracksCount(playlistId: Int, tracksCount: Int)
+    suspend fun updateTracksCount(playlistId: Int, tracksCount: Int, tracksId: String)
 
-    suspend fun insertTrack(track: TrackInPlaylistEntity)
+    suspend fun insertTrackInPlaylist(track: Track)
 
 }

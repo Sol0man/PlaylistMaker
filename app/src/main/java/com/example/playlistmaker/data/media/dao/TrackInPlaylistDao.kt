@@ -8,6 +8,6 @@ import com.example.playlistmaker.data.media.entity.TrackInPlaylistEntity
 @Dao
 interface TrackInPlaylistDao {
 
-    @Insert(entity = TrackInPlaylistEntity::class, onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertTrack(track: TrackInPlaylistEntity)
 }

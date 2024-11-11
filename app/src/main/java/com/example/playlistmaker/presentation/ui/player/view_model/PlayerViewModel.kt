@@ -1,10 +1,10 @@
 package com.example.playlistmaker.presentation.ui.player.view_model
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.playlistmaker.data.media.entity.TrackInPlaylistEntity
 import com.example.playlistmaker.domain.db.FavoriteTracksInteractor
 import com.example.playlistmaker.domain.db.PlaylistInteractor
 import com.example.playlistmaker.domain.player.MediaPlayerInteractor
@@ -23,7 +23,7 @@ class PlayerViewModel(
     private val searchHistoryInteractor: SearchHistoryInteractor,
     private val playlistInteractor: PlaylistInteractor,
 
-) : ViewModel() {
+    ) : ViewModel() {
     private var updateTimeOfPlayJob: Job? = null
     private var favoriteButtonJob: Job? = null
     private var addTrackInDb: Job? = null
@@ -46,6 +46,7 @@ class PlayerViewModel(
     fun toastMessage(): LiveData<String> = _toastMessage
 
     fun onCreate(track: Track) {
+
         mediaPlayerInteractor.preparePlayer(track)
         _playerProgressStatus.value = updatePlayerProgressStatus()
         _trackAddInFavorite.postValue(track.isFavorite)
@@ -106,13 +107,13 @@ class PlayerViewModel(
     fun clickButtonFavorite(track: Track) {
         if (_trackAddInFavorite.value!!) {
             track.isFavorite = false
-            deleteTrackFromDb = viewModelScope.launch {          //удалить и изменить значение livedata
-                favoriteTracksInteractor.deleteTrackFromFavorite(track)
-            }
+            deleteTrackFromDb =
+                viewModelScope.launch {          //удалить и изменить значение livedata
+                    favoriteTracksInteractor.deleteTrackFromFavorite(track)
+                }
             _trackAddInFavorite.postValue(false)
             searchHistoryInteractor.addTrack(track)
-        }
-        else {
+        } else {
             track.isFavorite = true
             addTrackInDb = viewModelScope.launch {
                 favoriteTracksInteractor.insertTrackToFavorite(track)
@@ -143,22 +144,54 @@ class PlayerViewModel(
         }
     }
 
-    fun addTrackInPlaylist(playlist: Playlist, track: Track, trackInPlaylist: TrackInPlaylistEntity, alreadyAdded: String, addedToPlaylist: String) {
+    fun addTrackInPlaylist(
+        playlist: Playlist,
+        track: Track,
+        alreadyAdded: String,
+        addedToPlaylist: String
+    ) {
 
         if (playlist.tracks.contains(track)) {
             _toastMessage.value = "$alreadyAdded ${playlist.playlistName}"
         } else {
             val tracks = playlist.tracks
             tracks.add(track)
-            viewModelScope.launch {
-                playlistInteractor.updateTracksCount(playlist.id, playlist.tracksCount + 1)
-                playlistInteractor.insertTrack(trackInPlaylist)
 
+            viewModelScope.launch {
+
+                playlistInteractor.insertTrackInPlaylist(track)
+
+                playlistInteractor.getPlaylists().collect { playlists ->
+                    Log.d("Log", "Список плейлистов: $playlists")
+
+                    val targetPlaylist = playlists.firstOrNull() { it.id == playlist.id }
+
+                    if (targetPlaylist == null) {
+                        Log.d("Log", "Плейлист с id ${playlist.id} не найден")
+                    } else {
+                        Log.d("Log", "Найденный плейлист: $targetPlaylist")
+
+
+                        val currentTracksId =
+                            targetPlaylist.tracks.map { it.trackId }.toMutableList()
+                        Log.d("Log", "Список id треков в плейлисте: $currentTracksId")
+
+                        currentTracksId.add(track.trackId)
+
+                        playlistInteractor.updateTracksCount(
+                            playlist.id,
+                            playlist.tracksCount + 1,
+                            tracksId = currentTracksId.joinToString(",")
+                        )
+                    }
+                }
+
+                _toastMessage.value = "$addedToPlaylist ${playlist.playlistName}"
+                checkPlaylistsInDb()
             }
-            _toastMessage.value = "$addedToPlaylist ${playlist.playlistName}"
-            checkPlaylistsInDb()
         }
     }
+
 
     companion object {
         private const val UPDATE = 250L
